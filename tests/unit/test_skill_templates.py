@@ -54,6 +54,18 @@ def test_retrieval_metrics_template():
     assert scores.as_metrics() == {"hit_at_1": 0.5, "hit_at_3": 0.5, "mrr_at_3": 0.5}
     chunks = [Document(id=str(i), page_content="x" * m.MIN_CHUNK_CHARS) for i in range(12)]
     assert m.sample_chunks(chunks, 10, seed=1) == m.sample_chunks(chunks, 10, seed=1)
+    with pytest.raises(ValueError):
+        m.evaluate_retriever(lambda q: [], [])
+    assert m.chunks_sql('a"b').endswith('FROM "a""b" ORDER BY source, langchain_id')
+
+
+def test_retrieval_metrics_template_detects_stale_labels():
+    m = load("retrieval_metrics_template")
+    stored = [Document(id="c1", page_content="new text")]
+    fresh = m.RetrievalExample("q", "c1", "s", "c", m.content_hash("new text"))
+    stale = m.RetrievalExample("q", "c1", "s", "c", m.content_hash("old text"))
+    assert m.check_dataset([fresh], stored) == []
+    assert m.check_dataset([stale], stored) and m.check_dataset([], stored)
 
 
 def test_retrieval_metrics_template_dataset_round_trip(tmp_path):
@@ -157,6 +169,7 @@ def test_mlflow_tracking_template_is_optional():
     with m.mlflow_run(False, run_name="x"):
         pass
     assert m.mlflow_server_available("http://127.0.0.1:9", timeout_s=0.5) is False
+    assert m.mlflow_server_available("not a url", timeout_s=0.5) is False   # never raises
 
 
 def test_check_native_modules(tmp_path):

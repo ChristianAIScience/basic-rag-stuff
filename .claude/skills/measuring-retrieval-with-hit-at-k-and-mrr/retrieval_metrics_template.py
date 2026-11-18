@@ -8,11 +8,13 @@ Flow:
     sample = sample_chunks(chunks, n=10, seed=42)
     dataset = build_retrieval_dataset(llm, sample, questions_per_chunk=2)
     save_dataset(Path("retrieval_dataset.json"), dataset, {"seed": 42})   # review by hand!
+    problems = check_dataset(dataset, fetch_all_chunks(...))             # stale / empty / duplicate labels
     scores = evaluate_retriever(lambda q: [d.id for d in retriever.invoke(q)], dataset)
     print(scores.hit_at, scores.mrr, scores.as_metrics())
 """
 
 import asyncio
+import hashlib
 import json
 import random
 from collections.abc import Callable
@@ -44,9 +46,18 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
 @dataclass(frozen=True)
 class RetrievalExample:
     question: str
-    chunk_id: str  # the gold chunk
+    chunk_id: str        # the gold chunk
     source: str
     category: str
+    chunk_hash: str = ""  # content_hash() of the gold chunk text - ids can be reused for new text
+
+
+def content_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def normalize_question(question: str) -> str:
+    return " ".join(question.lower().split())
 
 
 @dataclass
@@ -68,17 +79,22 @@ RankedRetriever = Callable[[str], list[str]]  # question -> chunk ids, best firs
 def evaluate_retriever(
     retriever: RankedRetriever, examples: list[RetrievalExample], k_values: tuple[int, ...] = (1, 3, 5)
 ) -> RetrievalScores:
+    if not examples:
+        raise ValueError("No examples to evaluate.")
     cutoff = max(k_values)
-    hits = {k: 0.0 for k in k_values}
-    reciprocal_ranks, gold_ranks = [], []
-    for example in examples:
-        ranked_ids = retriever(example.question)[:cutoff]
-        for k in k_values:
-            hits[k] += hit_at_k(ranked_ids, example.chunk_id, k)
-        reciprocal_ranks.append(reciprocal_rank(ranked_ids, example.chunk_id, cutoff))
-        gold_ranks.append(ranked_ids.index(example.chunk_id) + 1 if example.chunk_id in ranked_ids else None)
+    gold_ranks = [gold_rank(retriever(example.question), example.chunk_id, cutoff) for example in examples]
     count = len(examples)
-    return RetrievalScores({k: hits[k] / count for k in k_values}, sum(reciprocal_ranks) / count, gold_ranks)
+    # Every metric follows from the gold rank: Hit@k = rank <= k, reciprocal rank = 1 / rank.
+    return RetrievalScores(
+        hit_at={k: sum(1 for r in gold_ranks if r is not None and r <= k) / count for k in k_values},
+        mrr=sum(1 / r for r in gold_ranks if r is not None) / count,
+        gold_ranks=gold_ranks,
+    )
+
+
+def gold_rank(ranked_ids: list[str], gold_id: str, cutoff: int) -> int | None:
+    top = ranked_ids[:cutoff]
+    return top.index(gold_id) + 1 if gold_id in top else None
 
 
 # --- labelled dataset: random chunks + LLM-generated questions ------------------------------------
@@ -119,11 +135,32 @@ def generate_questions(llm: BaseChatModel, chunk: Document, n: int) -> list[str]
 
 
 def build_retrieval_dataset(llm: BaseChatModel, chunks: list[Document], questions_per_chunk: int) -> list[RetrievalExample]:
-    return [
-        RetrievalExample(question, chunk.id, chunk.metadata.get("source", ""), chunk.metadata.get("category", ""))
-        for chunk in chunks
-        for question in generate_questions(llm, chunk, questions_per_chunk)
-    ]
+    """Duplicate questions are kept once - one question with two gold chunks is an ambiguous label."""
+    examples, seen = [], set()
+    for chunk in chunks:
+        for question in generate_questions(llm, chunk, questions_per_chunk):
+            if normalize_question(question) in seen:
+                continue
+            seen.add(normalize_question(question))
+            examples.append(RetrievalExample(question, chunk.id, chunk.metadata.get("source", ""),
+                                             chunk.metadata.get("category", ""), content_hash(chunk.page_content)))
+    return examples
+
+
+def check_dataset(examples: list[RetrievalExample], stored_chunks: list[Document]) -> list[str]:
+    """Problems that make the metrics wrong; empty list = OK. Run before every evaluation."""
+    if not examples:
+        return ["The dataset contains no questions."]
+    problems = []
+    questions = [normalize_question(e.question) for e in examples]
+    if len(set(questions)) < len(questions):
+        problems.append("Some questions appear more than once.")
+    text_by_id = {chunk.id: chunk.page_content for chunk in stored_chunks}
+    if any(e.chunk_id not in text_by_id for e in examples):
+        problems.append("Some labelled chunks are no longer in the database.")
+    if any(e.chunk_id in text_by_id and e.chunk_hash != content_hash(text_by_id[e.chunk_id]) for e in examples):
+        problems.append("Some labelled chunks have different text now (re-chunked?) or no hash was stored.")
+    return problems
 
 
 def save_dataset(path: Path, examples: list[RetrievalExample], info: dict) -> None:
@@ -140,6 +177,13 @@ def load_dataset(path: Path) -> tuple[dict, list[RetrievalExample]]:
 # --- read all chunks from a langchain-postgres (PGVectorStore) table ------------------------------
 
 
+def chunks_sql(table: str) -> str:
+    """ORDER BY makes a seeded sample reproducible (heap order changes after upserts/VACUUM);
+    the table name is quoted as a Postgres identifier."""
+    quoted = '"' + table.replace('"', '""') + '"'
+    return f"SELECT langchain_id, content, source, category FROM {quoted} ORDER BY source, langchain_id"
+
+
 def fetch_all_chunks(host: str, port: int, user: str, password: str, database: str, table: str) -> list[Document]:
     """Every chunk with its id. Adjust the column names if your table differs."""
     import asyncpg  # only needed for this function
@@ -147,7 +191,7 @@ def fetch_all_chunks(host: str, port: int, user: str, password: str, database: s
     async def fetch() -> list:
         connection = await asyncpg.connect(host=host, port=port, user=user, password=password, database=database)
         try:
-            return await connection.fetch(f'SELECT langchain_id, content, source, category FROM "{table}"')
+            return await connection.fetch(chunks_sql(table))
         finally:
             await connection.close()
 

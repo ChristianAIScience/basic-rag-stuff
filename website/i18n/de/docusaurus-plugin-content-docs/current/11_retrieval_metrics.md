@@ -43,8 +43,11 @@ Fragen in eigenen Worten, damit die Stichwortsuche keinen unfairen Vorteil durch
 - Erzeugte Fragen können zu leicht oder zu vage sein. **`evaluation_data/retrieval_dataset.json` durchsehen** und
   schlechte Fragen löschen oder korrigieren – wenige gute Fragen sind mehr wert als viele schlechte.
 - 20 Fragen sind ein Schnelltest: Eine einzige Frage verändert Hit@k um 0,05.
-- Die Labels sind Chunk-IDs. Ein erneutes Einlesen mit anderer `CHUNK_SIZE` ändert die IDs; die Auswertung bricht
-  dann ab und fordert dich auf, den Datensatz neu zu erzeugen.
+- Labels können veralten. Chunk-IDs sind `uuid5(Quelle#Position)`, ein erneutes Einlesen mit anderer `CHUNK_SIZE`
+  vergibt also **dieselben IDs für anderen Text**. Jedes Label speichert deshalb zusätzlich einen Hash seines
+  Chunk-Texts; `check_dataset()` vergleicht ihn vor jeder Auswertung und bricht bei geänderten oder fehlenden
+  Chunks, einem leeren Datensatz oder doppelten Fragen ab. Dann den Datensatz neu erzeugen.
+- Wird dieselbe Frage für zwei Chunks erzeugt, bleibt sie nur einmal erhalten – sonst hätte sie zwei richtige Antworten.
 
 ## Der Code
 
@@ -61,7 +64,7 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
 | Datei | Aufgabe |
 |---|---|
 | `db/chunks.py` | `fetch_all_chunks()` – alle Chunks mit ihren IDs (eine SQL-Abfrage) |
-| `evaluation/question_generation.py` | `sample_chunks()`, `generate_questions()`, Datensatz speichern/laden |
+| `evaluation/question_generation.py` | `sample_chunks()`, `generate_questions()`, `check_dataset()`, Datensatz speichern/laden |
 | `evaluation/retrieval_metrics.py` | `hit_at_k()`, `reciprocal_rank()`, `evaluate_retriever()` |
 | `examples/generate_retrieval_dataset.py` | erzeugt `evaluation_data/retrieval_dataset.json` |
 | `examples/evaluate_retrieval.py` | gibt Hit@1/3/5 und MRR@5 pro Retrieval-Strategie aus |

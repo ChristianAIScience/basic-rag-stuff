@@ -25,6 +25,8 @@ def mlflow_experiment(settings):
     yield experiment
     tracking.mlflow.langchain.autolog(disable=True)
     tracking.mlflow.MlflowClient().delete_experiment(experiment.experiment_id)
+    # The deleted experiment would stay the process-wide active one; later runs would log into it.
+    tracking.mlflow.set_experiment(experiment_id="0")  # MLflow's "Default" experiment
 
 
 def test_run_logs_params_metrics_artifact_and_linked_trace(mlflow_experiment, settings):

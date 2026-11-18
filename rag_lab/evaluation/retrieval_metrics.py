@@ -48,19 +48,21 @@ class RetrievalScores:
 def evaluate_retriever(
     retriever: RankedRetriever, examples: list[RetrievalExample], k_values: tuple[int, ...] = (1, 3, 5)
 ) -> RetrievalScores:
+    if not examples:
+        raise ValueError("No examples to evaluate - generate the retrieval dataset first.")
     cutoff = max(k_values)
-    hits = {k: 0.0 for k in k_values}
-    reciprocal_ranks, gold_ranks = [], []
-    for example in examples:
-        ranked_ids = retriever(example.question)[:cutoff]
-        for k in k_values:
-            hits[k] += hit_at_k(ranked_ids, example.chunk_id, k)
-        reciprocal_ranks.append(reciprocal_rank(ranked_ids, example.chunk_id, cutoff))
-        gold_ranks.append(ranked_ids.index(example.chunk_id) + 1 if example.chunk_id in ranked_ids else None)
+    gold_ranks = [gold_rank(retriever(example.question), example.chunk_id, cutoff) for example in examples]
 
+    # Every metric follows from the gold rank: Hit@k = rank <= k, reciprocal rank = 1 / rank.
     count = len(examples)
     return RetrievalScores(
-        hit_at={k: hits[k] / count for k in k_values},
-        mrr=sum(reciprocal_ranks) / count,
+        hit_at={k: sum(1 for rank in gold_ranks if rank is not None and rank <= k) / count for k in k_values},
+        mrr=sum(1 / rank for rank in gold_ranks if rank is not None) / count,
         gold_ranks=gold_ranks,
     )
+
+
+def gold_rank(ranked_ids: list[str], gold_id: str, cutoff: int) -> int | None:
+    """1-based position of the gold chunk within the first `cutoff` results, None if it is not there."""
+    top = ranked_ids[:cutoff]
+    return top.index(gold_id) + 1 if gold_id in top else None

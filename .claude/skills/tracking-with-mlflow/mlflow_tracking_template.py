@@ -8,7 +8,7 @@ Server (docker-compose.yml):
       command: >
         mlflow server --host 0.0.0.0 --port 5000
         --backend-store-uri sqlite:////mlflow/mlflow.db --artifacts-destination /mlflow/artifacts
-      ports: ["127.0.0.1:5000:5000"]
+      ports: ["127.0.0.1:5000:5000"]     # change host port AND the tracking URI together
       volumes: ["./mlflow-data:/mlflow"]
 
 Usage:
@@ -37,7 +37,7 @@ def mlflow_server_available(tracking_uri: str, timeout_s: float = 3.0) -> bool:
     try:
         with urllib.request.urlopen(f"{tracking_uri.rstrip('/')}/health", timeout=timeout_s) as response:
             return response.status == 200
-    except OSError:
+    except (OSError, ValueError):  # ValueError: not a URL at all - never crash the caller
         return False
 
 
@@ -46,7 +46,8 @@ def enable_mlflow(tracking_uri: str, experiment: str, tracing: bool = True) -> b
     if not tracking_uri:
         print("MLflow: disabled (no tracking URI)")
         return False
-    if not mlflow_server_available(tracking_uri):
+    # Only http(s) servers can be probed; sqlite:///..., file:... or databricks URIs go to MLflow unchanged.
+    if tracking_uri.startswith(("http://", "https://")) and not mlflow_server_available(tracking_uri):
         print(f"MLflow: server not reachable at {tracking_uri} - continuing without MLflow")
         return False
     mlflow.set_tracking_uri(tracking_uri)

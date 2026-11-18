@@ -81,6 +81,8 @@ falsch ist – der Code oder die Erwartung.
 | `unit/test_evaluation.py` | LLM-Judges mit gefälschtem Judge: Prompts, Urteile, „nicht anwendbar", Bestehensquoten, Ziel-Adapter |
 | `unit/test_retrieval_metrics.py` | Hit@k, reziproker Rang, MRR, wiederholbare Chunk-Stichprobe, Labeln der Fragen |
 | `unit/test_tracking.py` | MLflow an/aus/nicht erreichbar, geloggte Parameter und Metriknamen (MLflow gemockt) |
+| `unit/test_cached_embeddings.py` | jede Anfrage wird nur einmal eingebettet, auch auf dem asynchronen Weg des Vector Stores |
+| `unit/test_skill_templates.py` | die kopierbaren Vorlagen in `.claude/skills/` lassen sich importieren und funktionieren |
 | `integration/test_vector_store.py` | echte Tabellenanlage, Einlesen ohne Duplikate, Metadaten-Filter in SQL |
 | `integration/test_retrieval_strategies.py` | alle fünf Strategien gegen echtes PostgreSQL |
 | `integration/test_retrieval_evaluation.py` | alle Chunks mit IDs lesen; Hit@1 = 1, wenn die Frage dem Chunk-Text entspricht |

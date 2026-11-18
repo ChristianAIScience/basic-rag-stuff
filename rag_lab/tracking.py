@@ -28,11 +28,16 @@ import mlflow  # noqa: E402
 from rag_lab.config import Settings  # noqa: E402
 
 
+def is_http_uri(tracking_uri: str) -> bool:
+    return tracking_uri.startswith(("http://", "https://"))
+
+
 def mlflow_server_available(tracking_uri: str, timeout_s: float = 3.0) -> bool:
+    """GET <uri>/health of an MLflow server. False for anything unreachable or malformed - never raises."""
     try:
         with urllib.request.urlopen(f"{tracking_uri.rstrip('/')}/health", timeout=timeout_s) as response:
             return response.status == 200
-    except OSError:
+    except (OSError, ValueError):  # ValueError: not a URL at all
         return False
 
 
@@ -41,9 +46,11 @@ def enable_mlflow(settings: Settings, experiment: str, tracing: bool = True) -> 
     if not settings.mlflow_tracking_uri:
         print("MLflow: disabled (MLFLOW_TRACKING_URI is not set)")
         return False
-    if not mlflow_server_available(settings.mlflow_tracking_uri):
+    # Only a tracking SERVER (http/https) can be probed; other valid URIs (sqlite:///..., file:...,
+    # databricks) are local stores or managed services and are handed to MLflow unchanged.
+    if is_http_uri(settings.mlflow_tracking_uri) and not mlflow_server_available(settings.mlflow_tracking_uri):
         print(f"MLflow: server not reachable at {settings.mlflow_tracking_uri} - continuing without MLflow "
-              "(start it with: docker compose up -d)")
+              "(start it with: docker compose up -d; MLFLOW_TRACKING_URI must use MLFLOW_PORT)")
         return False
 
     mlflow.set_tracking_uri(settings.mlflow_tracking_uri)

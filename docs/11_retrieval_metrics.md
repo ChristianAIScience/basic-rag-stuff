@@ -43,8 +43,11 @@ in the generator's own words, so keyword search does not get an unfair advantage
 - Generated questions can be too easy or too vague. **Review `evaluation_data/retrieval_dataset.json`**
   and delete or fix bad questions - a few good questions are worth more than many bad ones.
 - 20 questions are a smoke test: one question changes Hit@k by 0.05.
-- The labels are chunk ids. Re-ingesting with another `CHUNK_SIZE` changes the ids; the evaluation then
-  stops and asks you to generate the dataset again.
+- Labels can go stale. Chunk ids are `uuid5(source#position)`, so re-ingesting with another `CHUNK_SIZE`
+  reuses the **same ids for different text**. Each label therefore also stores a hash of its chunk text;
+  `check_dataset()` compares it before every evaluation and stops on changed or missing chunks, an empty
+  dataset or duplicate questions. Then generate the dataset again.
+- The same question generated for two chunks is kept only once - otherwise it would have two gold answers.
 
 ## The code
 
@@ -61,7 +64,7 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
 | File | Role |
 |---|---|
 | `db/chunks.py` | `fetch_all_chunks()` - all chunks with their ids (one SQL query) |
-| `evaluation/question_generation.py` | `sample_chunks()`, `generate_questions()`, save/load the dataset |
+| `evaluation/question_generation.py` | `sample_chunks()`, `generate_questions()`, `check_dataset()`, save/load the dataset |
 | `evaluation/retrieval_metrics.py` | `hit_at_k()`, `reciprocal_rank()`, `evaluate_retriever()` |
 | `examples/generate_retrieval_dataset.py` | creates `evaluation_data/retrieval_dataset.json` |
 | `examples/evaluate_retrieval.py` | prints Hit@1/3/5 and MRR@5 per retrieval strategy |

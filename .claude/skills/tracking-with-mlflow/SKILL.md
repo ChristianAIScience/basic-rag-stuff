@@ -33,8 +33,10 @@ Copyable, self-contained version for other projects: [mlflow_tracking_template.p
 
 | Symptom | Cause / fix |
 |---|---|
-| "server not reachable" | `docker compose up -d`; `MLFLOW_TRACKING_URI` must match `MLFLOW_PORT` |
+| "server not reachable" | `docker compose up -d`; `MLFLOW_TRACKING_URI` must use the port in `MLFLOW_PORT` - change both together |
+| non-http URI (`sqlite:///...`, `file:...`) | valid: `enable_mlflow` only probes http(s) servers and passes other URIs to MLflow unchanged |
 | `ports are not available ... 5000` | another MLflow or app uses the port: set `MLFLOW_PORT` and `MLFLOW_TRACKING_URI` to a free port; leave other projects' containers alone |
 | `UnicodeEncodeError` with `\U0001f3c3` | something imported `mlflow` before `rag_lab.tracking` - import via `rag_lab.tracking` |
 | Traces missing right after a run | export is asynchronous: `mlflow.flush_trace_async_logging()` (the integration test does this) |
+| Later runs fail with "experiment is deleted" | a deleted experiment was still active: `mlflow.set_experiment(experiment_id="0")` after deleting (test teardown) |
 | `FutureWarning ... experiment_ids` in `search_traces` | use `locations=[experiment_id]` |

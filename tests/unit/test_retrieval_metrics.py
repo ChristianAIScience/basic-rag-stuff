@@ -10,11 +10,13 @@ from rag_lab.evaluation.question_generation import (
     GeneratedQuestions,
     RetrievalExample,
     build_retrieval_dataset,
+    check_dataset,
+    content_hash,
     load_dataset,
     sample_chunks,
     save_dataset,
 )
-from rag_lab.evaluation.retrieval_metrics import evaluate_retriever, hit_at_k, reciprocal_rank
+from rag_lab.evaluation.retrieval_metrics import evaluate_retriever, gold_rank, hit_at_k, reciprocal_rank
 
 RANKED = ["c7", "c2", "c9", "c4", "c1"]
 
@@ -78,8 +80,8 @@ def test_build_dataset_labels_each_question_with_its_source_chunk():
     examples = build_retrieval_dataset(llm, [chunk], questions_per_chunk=2)
 
     assert examples == [
-        RetrievalExample("How many days?", "c42", "hr/v.md", "hr"),
-        RetrievalExample("Who approves?", "c42", "hr/v.md", "hr"),
+        RetrievalExample("How many days?", "c42", "hr/v.md", "hr", content_hash("Vacation text")),
+        RetrievalExample("Who approves?", "c42", "hr/v.md", "hr", content_hash("Vacation text")),
     ]
     prompt = llm.with_structured_output.return_value.invoke.call_args.args[0].to_string()
     assert "Write 2 different questions" in prompt and "Vacation text" in prompt
@@ -92,3 +94,52 @@ def test_dataset_round_trips_through_json(tmp_path):
     save_dataset(path, examples, {"seed": 42})
 
     assert load_dataset(path) == ({"seed": 42}, examples)
+
+
+def test_evaluate_retriever_rejects_an_empty_dataset():
+    with pytest.raises(ValueError, match="No examples"):
+        evaluate_retriever(lambda q: RANKED, [])
+
+
+@pytest.mark.parametrize(("gold", "cutoff", "expected"), [("c7", 5, 1), ("c9", 5, 3), ("c1", 3, None), ("zz", 5, None)])
+def test_gold_rank_is_one_based_and_respects_cutoff(gold, cutoff, expected):
+    assert gold_rank(RANKED, gold, cutoff) == expected
+
+
+def test_duplicate_questions_from_different_chunks_are_kept_once():
+    llm = MagicMock()
+    llm.with_structured_output.return_value.invoke.return_value = GeneratedQuestions(
+        questions=["How many vacation days do I get?"])
+    chunks = [Document(id=f"c{i}", page_content=f"text {i}", metadata={"source": "a.md", "category": "hr"})
+              for i in range(2)]
+
+    examples = build_retrieval_dataset(llm, chunks, questions_per_chunk=1)
+
+    assert [e.chunk_id for e in examples] == ["c0"]  # the second, identical question would be an ambiguous label
+
+
+STORED = [Document(id="c1", page_content="27 vacation days"), Document(id="c2", page_content="VPN setup")]
+
+
+def label(question: str, chunk_id: str, text: str) -> RetrievalExample:
+    return RetrievalExample(question, chunk_id, "a.md", "hr", content_hash(text))
+
+
+def test_check_dataset_accepts_current_labels():
+    assert check_dataset([label("q1", "c1", "27 vacation days"), label("q2", "c2", "VPN setup")], STORED) == []
+
+
+def test_check_dataset_detects_same_id_with_different_text():
+    # Re-ingesting with another CHUNK_SIZE reuses ids (uuid5 of source#position) for new text.
+    problems = check_dataset([label("q1", "c1", "the OLD chunk text")], STORED)
+    assert len(problems) == 1 and "different text" in problems[0]
+
+
+@pytest.mark.parametrize(("examples", "expected"), [
+    ([], "no questions"),
+    ([label("Same?", "c1", "27 vacation days"), label("same? ", "c2", "VPN setup")], "more than once"),
+    ([label("q", "gone", "x")], "no longer in the database"),
+    ([RetrievalExample("q", "c1", "a.md", "hr")], "no chunk hashes"),   # dataset from before hashes existed
+])
+def test_check_dataset_reports_problems(examples, expected):
+    assert any(expected in problem for problem in check_dataset(examples, STORED))

@@ -5,7 +5,8 @@ Run:  uv run python -m examples.generate_retrieval_dataset
 (Requires: docker compose up -d, ingested documents, and a real LLM_API_KEY.)
 
 Writes evaluation_data/retrieval_dataset.json - review the questions there before evaluating.
-Re-ingesting with another CHUNK_SIZE changes the chunk ids: generate the dataset again afterwards.
+Each label stores a hash of its chunk text; after re-ingesting with other chunking,
+examples.evaluate_retrieval refuses the stale labels - generate the dataset again then.
 """
 
 import argparse

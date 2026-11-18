@@ -84,3 +84,18 @@ def test_judge_metrics_are_pass_rates_without_empty_judges():
 def test_retrieval_scores_as_metrics_use_names_mlflow_accepts():
     scores = RetrievalScores(hit_at={1: 0.5, 3: 0.75, 5: 1.0}, mrr=0.7, gold_ranks=[])
     assert scores.as_metrics() == {"hit_at_1": 0.5, "hit_at_3": 0.75, "hit_at_5": 1.0, "mrr_at_5": 0.7}
+
+
+def test_non_http_tracking_uris_are_not_probed(fake_mlflow, monkeypatch):
+    probe = MagicMock(return_value=False)
+    monkeypatch.setattr(tracking, "mlflow_server_available", probe)
+    settings = dataclasses.replace(SETTINGS, mlflow_tracking_uri="sqlite:///mlflow.db")
+
+    assert tracking.enable_mlflow(settings, "exp") is True   # a local store is valid without a server
+    probe.assert_not_called()
+    fake_mlflow.set_tracking_uri.assert_called_once_with("sqlite:///mlflow.db")
+
+
+@pytest.mark.parametrize("uri", ["mlflow", "http://", "http://[broken"])
+def test_server_check_never_raises_for_malformed_uris(uri):
+    assert tracking.mlflow_server_available(uri, timeout_s=0.5) is False

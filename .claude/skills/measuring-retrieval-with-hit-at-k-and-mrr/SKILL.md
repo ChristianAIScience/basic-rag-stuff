@@ -39,7 +39,9 @@ Copy this checklist:
 - **Labels**: `sample_chunks()` uses a fixed seed and skips chunks under `MIN_CHUNK_CHARS` (150; shorter chunks are mostly headings). The chunk a question was generated from is the single gold label.
 - **Scores are a lower bound**: an overlapping chunk that also answers counts as a miss.
 - **Question prompt**: natural employee wording in the generator's own words, no "the text", documents treated as data - copied phrases would favour keyword search.
-- **Ids must still exist**: chunk ids are `uuid5(source#position)`; re-ingesting with another chunking changes them. `evaluate_retrieval` stops in that case - regenerate the dataset with the same seed instead of editing ids. Keep the reviewed file in git.
+- **Labels go stale silently by id**: chunk ids are `uuid5(source#position)`, so re-ingesting with another chunking reuses the SAME ids for DIFFERENT text. Each label stores `chunk_hash` (sha256 of the chunk text); `check_dataset()` runs before every evaluation and stops on changed/missing chunks, an empty dataset or duplicate questions. Regenerate the dataset (same seed) instead of editing ids or hashes. Keep the reviewed file in git.
+- **Duplicates**: the same question generated for two chunks is kept once - two gold chunks would make the label ambiguous (and break the per-question category lookup of the oracle filter).
+- **Cost**: `evaluate_retrieval` wraps the embeddings in `QueryCachedEmbeddings` (`rag_lab/utils/cached_embeddings.py`), so each question is embedded once for all five strategies.
 - **Metadata filter** receives the gold chunk's category - an oracle upper bound, marked `*`.
 - **MLflow** metric names: `hit_at_1`, `hit_at_3`, `hit_at_5`, `mrr_at_5` (`RetrievalScores.as_metrics()`), logged as one nested run per strategy (`tracking-with-mlflow`).
 

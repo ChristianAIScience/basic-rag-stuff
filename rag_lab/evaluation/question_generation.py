@@ -5,12 +5,18 @@ Labelling by hand is slow, so we let an LLM write the questions ("synthetic quer
     1. sample_chunks()          pick N random chunks (fixed seed -> reproducible)
     2. generate_questions()     the LLM writes questions that this chunk answers
     3. build_retrieval_dataset  every question is labelled with its source chunk id
+                                + a hash of the chunk text (detects stale labels)
+    4. check_dataset()          refuses empty, ambiguous or stale datasets before evaluating
 
 The source chunk is the "gold" chunk: a good retriever ranks it at the top.
 Limitation: another chunk may answer a question as well (e.g. overlapping chunks) -
 that counts as a miss, so the metrics are a lower bound.
+
+Why a hash and not just the id? Chunk ids are uuid5(source#position). Re-ingesting with another
+CHUNK_SIZE reuses the same ids for DIFFERENT text, so an id alone cannot tell that a label is stale.
 """
 
+import hashlib
 import json
 import random
 from dataclasses import asdict, dataclass
@@ -28,9 +34,19 @@ MIN_CHUNK_CHARS = 150
 @dataclass(frozen=True)
 class RetrievalExample:
     question: str
-    chunk_id: str   # id of the gold chunk in the vector table
+    chunk_id: str        # id of the gold chunk in the vector table
     source: str
     category: str
+    chunk_hash: str = ""  # content_hash() of the gold chunk text when the label was made
+
+
+def content_hash(text: str) -> str:
+    """Short fingerprint of a chunk text - changes whenever the text changes."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def normalize_question(question: str) -> str:
+    return " ".join(question.lower().split())
 
 
 class GeneratedQuestions(BaseModel):
@@ -70,11 +86,40 @@ def generate_questions(llm: BaseChatModel, chunk: Document, n: int) -> list[str]
 
 
 def build_retrieval_dataset(llm: BaseChatModel, chunks: list[Document], questions_per_chunk: int) -> list[RetrievalExample]:
-    return [
-        RetrievalExample(question, chunk.id, chunk.metadata["source"], chunk.metadata["category"])
-        for chunk in chunks
-        for question in generate_questions(llm, chunk, questions_per_chunk)
-    ]
+    """Label every generated question with its chunk. A question generated twice is kept once:
+    the same question with two gold chunks would be an ambiguous label."""
+    examples, seen = [], set()
+    for chunk in chunks:
+        for question in generate_questions(llm, chunk, questions_per_chunk):
+            key = normalize_question(question)
+            if key in seen:
+                continue
+            seen.add(key)
+            examples.append(RetrievalExample(question, chunk.id, chunk.metadata["source"],
+                                             chunk.metadata["category"], content_hash(chunk.page_content)))
+    return examples
+
+
+def check_dataset(examples: list[RetrievalExample], stored_chunks: list[Document]) -> list[str]:
+    """Problems that make the metrics wrong; an empty list means the dataset can be evaluated."""
+    if not examples:
+        return ["The dataset contains no questions."]
+    problems = []
+    questions = [normalize_question(e.question) for e in examples]
+    duplicates = sorted({q for q in questions if questions.count(q) > 1})
+    if duplicates:
+        problems.append(f"{len(duplicates)} question(s) appear more than once, e.g. {duplicates[0]!r}.")
+
+    text_by_id = {chunk.id: chunk.page_content for chunk in stored_chunks}
+    missing = [e for e in examples if e.chunk_id not in text_by_id]
+    changed = [e for e in examples if e.chunk_id in text_by_id
+               and e.chunk_hash != content_hash(text_by_id[e.chunk_id])]
+    if missing:
+        problems.append(f"{len(missing)} labelled chunk(s) are no longer in the database.")
+    if changed:
+        problems.append(f"{len(changed)} labelled chunk(s) have different text now (re-ingested with other "
+                        "chunking?) or the dataset has no chunk hashes.")
+    return problems
 
 
 def save_dataset(path: Path, examples: list[RetrievalExample], info: dict) -> None:

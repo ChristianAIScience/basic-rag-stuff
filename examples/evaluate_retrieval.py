@@ -4,7 +4,7 @@ Run:  uv run python -m examples.evaluate_retrieval
       uv run python -m examples.evaluate_retrieval --details      (rank of the gold chunk per question)
 (Requires: examples.generate_retrieval_dataset first, data ingested with REAL embeddings.)
 
-Cost: only one embedding call per question and strategy - no LLM judges involved.
+Cost: one embedding call per question (cached across the five strategies) - no LLM judges involved.
 """
 
 import argparse
@@ -14,11 +14,12 @@ from rag_lab.config import load_settings
 from rag_lab.db.chunks import fetch_all_chunks
 from rag_lab.db.connection import get_engine
 from rag_lab.db.vector_store import get_vector_store
-from rag_lab.evaluation.question_generation import load_dataset
+from rag_lab.evaluation.question_generation import check_dataset, load_dataset
 from rag_lab.evaluation.retrieval_metrics import evaluate_retriever
 from rag_lab.models import get_embeddings
 from rag_lab.retrieval import hybrid, metadata_filter, mmr, score_threshold, similarity
 from rag_lab.tracking import enable_mlflow, log_results, mlflow_run, rag_params
+from rag_lab.utils.cached_embeddings import QueryCachedEmbeddings
 
 DEFAULT_DATASET = Path(__file__).resolve().parent.parent / "evaluation_data" / "retrieval_dataset.json"
 K_VALUES = (1, 3, 5)
@@ -38,17 +39,17 @@ def main() -> None:
     settings = load_settings()
     info, examples = load_dataset(args.dataset)
 
-    # The labels point to chunk ids - they must still exist (re-ingestion with another CHUNK_SIZE changes them).
-    stored_ids = {chunk.id for chunk in fetch_all_chunks(settings)}
-    missing = [e for e in examples if e.chunk_id not in stored_ids]
-    if missing:
-        raise SystemExit(f"{len(missing)} labelled chunks are no longer in the database "
-                         "(chunking changed?). Run examples.generate_retrieval_dataset again.")
-    if info["chunk_size"] != settings.chunk_size:
-        print(f"Note: dataset was generated with chunk_size={info['chunk_size']}, now {settings.chunk_size}.")
+    # Labels must still point at the same text: chunk ids survive re-ingestion with other chunking,
+    # the stored text hash does not. Also rejects empty datasets and duplicate questions.
+    problems = check_dataset(examples, fetch_all_chunks(settings))
+    if problems:
+        bullet_list = "".join(f"\n  - {problem}" for problem in problems)
+        raise SystemExit(f"Cannot evaluate this dataset:{bullet_list}\nRun examples.generate_retrieval_dataset again.")
 
-    vector_store = get_vector_store(get_engine(settings), get_embeddings(settings), settings)
-    category_of = {e.question: e.category for e in examples}
+    # Five strategies search for the same questions: embed each question only once.
+    embeddings = QueryCachedEmbeddings(get_embeddings(settings))
+    vector_store = get_vector_store(get_engine(settings), embeddings, settings)
+    category_of = {e.question: e.category for e in examples}  # unique: check_dataset rejects duplicates
     strategies = {
         "similarity": lambda q: ids(similarity.similarity_search(vector_store, q, k=CUTOFF)),
         "mmr": lambda q: ids(mmr.mmr_search(vector_store, q, k=CUTOFF)),

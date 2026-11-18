@@ -38,3 +38,13 @@ def test_ensure_table_reraises_other_database_errors():
 def test_connection_url_escapes_special_characters_in_password():
     url = build_connection_url(SETTINGS)
     assert url == "postgresql+asyncpg://user:p%40ss%2Fword@db:5433/rag"
+
+
+def test_chunks_query_is_ordered_and_quotes_the_table_name():
+    from sqlalchemy.dialects import postgresql
+
+    from rag_lab.db.chunks import chunks_query
+
+    sql = str(chunks_query('odd"name').compile(dialect=postgresql.dialect()))
+    assert 'FROM "odd""name"' in sql                     # quoted, no SQL injection via VECTOR_TABLE
+    assert sql.endswith("ORDER BY source, langchain_id")  # stable order -> reproducible seeded samples

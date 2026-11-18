@@ -81,6 +81,8 @@ one is wrong - the code or the expectation.
 | `unit/test_evaluation.py` | LLM judges with a fake judge: prompts, verdicts, "not applicable", pass rates, target adapters |
 | `unit/test_retrieval_metrics.py` | Hit@k, reciprocal rank, MRR, reproducible chunk sampling, question labelling |
 | `unit/test_tracking.py` | MLflow on/off/unreachable, logged params and metric names (MLflow mocked) |
+| `unit/test_cached_embeddings.py` | each query is embedded once, also on the async path the vector store uses |
+| `unit/test_skill_templates.py` | the copyable template scripts in `.claude/skills/` import and work |
 | `integration/test_vector_store.py` | real table creation, ingestion without duplicates, metadata filters in SQL |
 | `integration/test_retrieval_strategies.py` | all five strategies against real PostgreSQL |
 | `integration/test_retrieval_evaluation.py` | reading all chunks with ids; Hit@1 = 1 when the question equals the chunk text |

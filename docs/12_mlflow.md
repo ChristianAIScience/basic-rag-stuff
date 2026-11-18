@@ -47,8 +47,9 @@ mlflow:
 In `.env`:
 
 ```dotenv
-MLFLOW_PORT=5000                          # use e.g. 5001 if port 5000 is taken
-MLFLOW_TRACKING_URI=http://localhost:5000 # empty = run everything without MLflow
+# Port 5000 taken? Change BOTH lines to the same free port, e.g. 5001.
+MLFLOW_PORT=5000                          # where Docker publishes the server
+MLFLOW_TRACKING_URI=http://localhost:5000 # where the code connects; empty = no MLflow
 ```
 
 ## The code
@@ -128,7 +129,7 @@ MLflow: server not reachable at http://localhost:5000 - continuing without MLflo
 
 1. Evaluate the current setup (`evaluate_rag`, `evaluate_retrieval`).
 2. Change one thing, e.g. `CHUNK_SIZE=300` in `.env`.
-3. Re-ingest and regenerate the retrieval dataset (chunk ids change, chapter 11).
+3. Re-ingest and regenerate the retrieval dataset (the labelled chunk texts change, chapter 11).
 4. Evaluate again.
 5. In MLflow, compare both runs: the `chunk_size` param explains the difference in the metrics.
 
