@@ -14,3 +14,6 @@ postgres-data/
 website/node_modules/
 website/build/
 website/.docusaurus/
+
+# Machine-specific Claude skill - local only
+.claude/skills/troubleshooting-windows-env/

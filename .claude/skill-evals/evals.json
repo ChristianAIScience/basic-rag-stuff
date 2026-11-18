@@ -1,0 +1,321 @@
+[
+  {
+    "skills": [
+      "managing-pgvector-docker"
+    ],
+    "query": "I changed POSTGRES_PASSWORD in .env and now the examples can't log in to the database. Fix it.",
+    "files": [
+      ".env",
+      "docker-compose.yml"
+    ],
+    "expected_behavior": [
+      "Explains that the password is only applied when postgres-data/ is first created",
+      "Runs the ALTER USER command via psql -v pw so the password is never printed",
+      "Verifies a connection with load_settings() afterwards"
+    ]
+  },
+  {
+    "skills": [
+      "managing-pgvector-docker"
+    ],
+    "query": "Make a backup of the vector database before I try something risky.",
+    "files": [],
+    "expected_behavior": [
+      "Uses pg_dump --format=custom inside the container and docker cp to copy it out",
+      "Sets MSYS_NO_PATHCONV=1 in Git Bash",
+      "Reports the backup file path and the row count of documents at backup time"
+    ]
+  },
+  {
+    "skills": [
+      "managing-pgvector-docker"
+    ],
+    "query": "Start over with a completely empty database.",
+    "files": [
+      "docker-compose.yml"
+    ],
+    "expected_behavior": [
+      "Uses docker compose down and deletes postgres-data/ (not docker compose down -v)",
+      "Confirms with the user before deleting the data folder",
+      "Restarts with docker compose up -d and checks the container is healthy"
+    ]
+  },
+  {
+    "skills": [
+      "ingesting-documents"
+    ],
+    "query": "Add support for .html files to the ingestion.",
+    "files": [
+      "rag_lab/ingestion/loader.py"
+    ],
+    "expected_behavior": [
+      "Adds the dispatch in loader.py and sets source and category metadata",
+      "Adds a unit test in tests/unit/test_ingestion.py using tmp_path",
+      "Runs ingestion twice and checks the row count does not change"
+    ]
+  },
+  {
+    "skills": [
+      "ingesting-documents"
+    ],
+    "query": "I don't have an OpenAI key yet but want data in the vector table.",
+    "files": [],
+    "expected_behavior": [
+      "Runs examples.ingest_documents --fake-embeddings",
+      "Explains that similarity search is meaningless with fake vectors but keyword search and filters work",
+      "Notes that a later run without the flag overwrites the same rows"
+    ]
+  },
+  {
+    "skills": [
+      "ingesting-documents"
+    ],
+    "query": "After lowering CHUNK_SIZE I re-ingested, and now some answers quote old text. Why?",
+    "files": [
+      ".env"
+    ],
+    "expected_behavior": [
+      "Identifies stale rows: deterministic ids per position, fewer or more chunks leave old positions",
+      "Recommends resetting the database before re-ingesting",
+      "Does not propose adding random ids (which would break idempotency)"
+    ]
+  },
+  {
+    "skills": [
+      "chunking-pdfs-by-font-size"
+    ],
+    "query": "Ingest my manual.pdf and split it by chapter only, not by section.",
+    "files": [
+      "data/manuals/manual.pdf"
+    ],
+    "expected_behavior": [
+      "Runs examples.pdf_chunking with max_heading_level 1 first to inspect font sizes and sections",
+      "Explains detected body size and heading levels",
+      "Mentions limits if headings are bold-only or the PDF is scanned"
+    ]
+  },
+  {
+    "skills": [
+      "chunking-pdfs-by-font-size"
+    ],
+    "query": "Headings that are only bold are not detected. Add bold detection.",
+    "files": [
+      "rag_lab/ingestion/pdf_loader.py"
+    ],
+    "expected_behavior": [
+      "Writes a failing test first in tests/unit/test_pdf_loader.py",
+      "Uses fontname to detect bold without breaking the existing edge cases",
+      "Re-runs examples.pdf_chunking on the sample PDF and explains any changed section counts"
+    ]
+  },
+  {
+    "skills": [
+      "chunking-pdfs-by-font-size"
+    ],
+    "query": "Write a test that generates a PDF with fpdf2.",
+    "files": [],
+    "expected_behavior": [
+      "Calls multi_cell with new_x=\"LMARGIN\" and new_y=\"NEXT\"",
+      "Uses tmp_path for the generated PDF",
+      "Keeps pure logic tests on TextLine lists without a PDF"
+    ]
+  },
+  {
+    "skills": [
+      "building-retrieval-strategies"
+    ],
+    "query": "Add a reranking strategy to the retriever comparison.",
+    "files": [
+      "examples/compare_retrievers.py"
+    ],
+    "expected_behavior": [
+      "Creates a new module with SCORE_LABEL and one function",
+      "Labels the reranker score separately from distances",
+      "Adds unit and integration tests and updates docs/03_retrieval.md plus the German copy"
+    ]
+  },
+  {
+    "skills": [
+      "building-retrieval-strategies"
+    ],
+    "query": "Hybrid search returns nothing from the keyword side for 'What does TK-407 mean?'",
+    "files": [
+      "rag_lab/retrieval/hybrid.py"
+    ],
+    "expected_behavior": [
+      "Explains that plainto_tsquery requires every word ('mean' is missing)",
+      "Suggests a keyword-like query or a different tsquery function",
+      "Keeps a fresh HybridSearchConfig per call"
+    ]
+  },
+  {
+    "skills": [
+      "building-retrieval-strategies"
+    ],
+    "query": "Is a similarity score of 0.4 better than an RRF score of 0.03?",
+    "files": [],
+    "expected_behavior": [
+      "States the scores are not comparable",
+      "Explains distance (lower is better) vs relevance vs RRF (higher is better)",
+      "Points to the SCORE_LABEL of each strategy"
+    ]
+  },
+  {
+    "skills": [
+      "building-langchain-rag-chains"
+    ],
+    "query": "Make the LangChain chain also return the retrieved chunk count.",
+    "files": [
+      "rag_lab/langchain_rag/chain.py"
+    ],
+    "expected_behavior": [
+      "Keeps question, sources and answer in the output",
+      "Avoids piping two plain callables (uses a lambda inside the input dict)",
+      "Updates tests/unit/test_langchain_chain.py and runs pytest"
+    ]
+  },
+  {
+    "skills": [
+      "building-langchain-rag-chains"
+    ],
+    "query": "Change the RAG prompt so answers are in German.",
+    "files": [
+      "rag_lab/langchain_rag/prompt.py"
+    ],
+    "expected_behavior": [
+      "Edits RAG_PROMPT in prompt.py only",
+      "Mentions that both LangGraph graphs share this prompt",
+      "Keeps the grounding rule (use only the context)"
+    ]
+  },
+  {
+    "skills": [
+      "building-langchain-rag-chains"
+    ],
+    "query": "Test the chain without calling OpenAI.",
+    "files": [],
+    "expected_behavior": [
+      "Uses RunnableLambda for the retriever",
+      "Uses GenericFakeChatModel or a recording RunnableLambda LLM",
+      "Runs uv run python -m pytest"
+    ]
+  },
+  {
+    "skills": [
+      "building-langgraph-workflows"
+    ],
+    "query": "Add a node to the basic LangGraph RAG that summarizes the retrieved documents before answering.",
+    "files": [
+      "rag_lab/langgraph_rag/graph.py"
+    ],
+    "expected_behavior": [
+      "Creates a separate node file with Reads/Writes docstring",
+      "Adds the state key, binds the LLM with functools.partial in graph.py",
+      "Adds a node test and a graph-order test"
+    ]
+  },
+  {
+    "skills": [
+      "building-langgraph-workflows"
+    ],
+    "query": "Show me how the state changes while the graph runs.",
+    "files": [],
+    "expected_behavior": [
+      "Uses graph.stream(..., stream_mode=\"updates\")",
+      "Optionally prints graph.get_graph().draw_mermaid()",
+      "Explains that nodes return only changed keys"
+    ]
+  },
+  {
+    "skills": [
+      "building-langgraph-workflows"
+    ],
+    "query": "My node test fails because the LLM is a MagicMock and the node uses prompt | llm.",
+    "files": [],
+    "expected_behavior": [
+      "Rewrites the node to explicit PROMPT.invoke + llm.invoke(...).text calls",
+      "Keeps graph.py free of logic",
+      "Re-runs the unit tests until green"
+    ]
+  },
+  {
+    "skills": [
+      "building-agentic-rag"
+    ],
+    "query": "Add a step that checks whether the generated answer is supported by the documents and retries otherwise.",
+    "files": [
+      "rag_lab/agentic_rag/graph.py"
+    ],
+    "expected_behavior": [
+      "LLM decision via with_structured_output stored in state; routing stays pure Python",
+      "Loop is bounded by a retry counter",
+      "Tests at routing, node and graph level"
+    ]
+  },
+  {
+    "skills": [
+      "building-agentic-rag"
+    ],
+    "query": "For questions not in the documents, the agent should never invent an answer.",
+    "files": [],
+    "expected_behavior": [
+      "Uses the deterministic fallback NO_RELEVANT_DOCUMENTS_ANSWER without an LLM call",
+      "Points to route_after_grading and max_retries",
+      "Adds or runs the graph test that ends in the fallback"
+    ]
+  },
+  {
+    "skills": [
+      "building-agentic-rag"
+    ],
+    "query": "Test the agentic graph offline.",
+    "files": [
+      "tests/unit/fakes.py"
+    ],
+    "expected_behavior": [
+      "Uses fake_llm (MagicMock with scripted with_structured_output) instead of GenericFakeChatModel",
+      "Asserts the exact visited node sequence",
+      "Covers the boundary retry_count == max_retries"
+    ]
+  },
+  {
+    "skills": [
+      "maintaining-docs-website"
+    ],
+    "query": "Add a documentation chapter about evaluation of RAG answers.",
+    "files": [
+      "docs/"
+    ],
+    "expected_behavior": [
+      "Creates docs/09_*.md and the German copy with the same file name",
+      "Adds a start page card with literal translate ids and fills i18n/de/code.json",
+      "Runs npm run build until both locales succeed"
+    ]
+  },
+  {
+    "skills": [
+      "maintaining-docs-website"
+    ],
+    "query": "I fixed a typo in docs/03_retrieval.md.",
+    "files": [
+      "docs/03_retrieval.md"
+    ],
+    "expected_behavior": [
+      "Checks whether the German copy needs the same fix",
+      "Rebuilds or reminds to rebuild the site",
+      "Does not copy the English file over the German one"
+    ]
+  },
+  {
+    "skills": [
+      "maintaining-docs-website"
+    ],
+    "query": "npm start shows only English, the language switch doesn't work.",
+    "files": [],
+    "expected_behavior": [
+      "Explains that npm start serves one locale",
+      "Suggests npm start -- --locale de, or npm run build + npm run serve for the switch",
+      "Does not change the i18n configuration"
+    ]
+  }
+]

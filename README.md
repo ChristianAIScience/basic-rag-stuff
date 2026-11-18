@@ -88,12 +88,6 @@ tests/integration/     tests against the Docker database
 data/                  sample knowledge base (hr/, products/, it_support/, handbook/*.pdf)
 postgres-data/         PostgreSQL database files (created by Docker, not in git)
 website/               documentation website (Docusaurus/React), reads docs/
+.claude/skills/        Claude Code skills: one per implementation area (how to extend it, pitfalls)
+.claude/skill-evals/   test scenarios (3 per skill) for checking the skills with Claude
 ```
-
-## Windows notes
-
-- **Port 5432 already in use?** If a local PostgreSQL is installed, set `POSTGRES_PORT=5433` in `.env`.
-  Docker Compose and the Python code both read it.
-- **"An application control policy has blocked this file"**: Windows Smart App Control blocks
-  native DLLs it doesn't know yet. `pyproject.toml` pins `xxhash<4` and `ormsgpack<1.13`
-  (`[tool.uv] constraint-dependencies`), whose DLLs are allowed. Remove the pins on other systems if you like.
