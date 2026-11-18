@@ -13,6 +13,7 @@ from rag_lab.db.connection import get_engine
 from rag_lab.db.vector_store import get_vector_store
 from rag_lab.langchain_rag.retriever import build_retriever
 from rag_lab.models import get_chat_model, get_embeddings
+from rag_lab.tracking import enable_mlflow
 
 DEMO_QUESTIONS = [
     "What do I do when TunnelKite shows error TK-407?",  # knowledge base -> retrieve and answer
@@ -52,6 +53,7 @@ def run(graph, question: str) -> None:
 
 def main() -> None:
     settings = load_settings()
+    enable_mlflow(settings, experiment="rag-examples")  # trace every run (optional)
     vector_store = get_vector_store(get_engine(settings), get_embeddings(settings), settings)
     graph = build_agentic_graph(build_retriever(vector_store), get_chat_model(settings))
 

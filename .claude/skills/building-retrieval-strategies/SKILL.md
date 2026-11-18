@@ -8,6 +8,7 @@ description: Implements and compares pgvector retrieval strategies - similarity 
 Reference implementation: one module per strategy in `rag_lab/retrieval/`. Each exports one function
 `(vector_store, query, ...) -> list[tuple[Document, float | None]]` and a `SCORE_LABEL` string.
 Comparison: `rag_lab/retrieval/comparison.py` + `examples/compare_retrievers.py`. Learner-facing explanation: `docs/03_retrieval.md`.
+Copyable, self-contained version for other projects: [retrieval_strategies_template.py](retrieval_strategies_template.py) (dependencies in its header).
 
 ## Score semantics
 

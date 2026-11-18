@@ -12,6 +12,8 @@ All examples share one PostgreSQL + pgvector database and one configuration.
 | LangGraph RAG | the same pipeline as a stateful graph | `uv run python -m examples.basic_langgraph_rag` |
 | Agentic RAG | a graph that decides, grades, rewrites and retries | `uv run python -m examples.agentic_rag` |
 | Evaluation | LLM-as-a-judge: correctness, relevance, groundedness, retrieval relevance | `uv run python -m examples.evaluate_rag` |
+| Retrieval metrics | Hit@k and MRR on chunks labelled with LLM-generated questions | `uv run python -m examples.evaluate_retrieval` |
+| MLflow | traces of every run, evaluation runs to compare (UI on http://localhost:5000) | `docker compose up -d` |
 
 The sample documents in `data/` describe the fictional company **Lumora Systems**.
 Because the facts are made up, a correct answer *must* come from retrieval — the LLM can't know them.
@@ -22,7 +24,7 @@ Requirements: [uv](https://docs.astral.sh/uv/), Docker, an OpenAI API key.
 
 ```bash
 cp .env.example .env              # then set POSTGRES_PASSWORD and LLM_API_KEY
-docker compose up -d              # PostgreSQL 17 + pgvector
+docker compose up -d              # PostgreSQL 17 + pgvector, MLflow server (http://localhost:5000)
 uv sync                           # installs Python 3.14 and all dependencies
 uv run python -m examples.ingest_documents
 uv run python -m examples.basic_langchain_rag
@@ -72,6 +74,8 @@ how it connects to the rest, how to run it and what output to expect.
 8. [PDF chunking by font size](docs/08_pdf_chunking.md)
 9. [Testing](docs/09_testing.md) - what the tests check, reading pytest output, writing tests
 10. [LLM-as-a-judge](docs/10_llm_as_judge.md) - grading RAG answers with LLM judges
+11. [Retrieval metrics](docs/11_retrieval_metrics.md) - Hit@k and MRR on LLM-labelled chunks
+12. [MLflow](docs/12_mlflow.md) - tracing and experiment tracking with an MLflow server in Docker
 
 ## Project layout
 
@@ -89,9 +93,12 @@ rag_lab/
 examples/              runnable entry points (python -m examples.<name>)
 tests/unit/            fast tests with fakes
 tests/integration/     tests against the Docker database
+evaluation_data/       labelled retrieval questions (generated, reviewed, kept in git)
 data/                  sample knowledge base (hr/, products/, it_support/, handbook/*.pdf)
 postgres-data/         PostgreSQL database files (created by Docker, not in git)
+mlflow-data/           MLflow runs, traces and artifacts (created by Docker, not in git)
 website/               documentation website (Docusaurus/React), reads docs/
-.claude/skills/        Claude Code skills: one per implementation area (how to extend it, pitfalls)
+.claude/skills/        Claude Code skills: one per implementation area (how to extend it, pitfalls),
+                       each with a self-contained template script to copy into other projects
 .claude/skill-evals/   test scenarios (3 per skill) for checking the skills with Claude
 ```

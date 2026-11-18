@@ -10,6 +10,7 @@ All targets x 9 questions = 27 RAG runs + up to 108 judge calls.
 
 import argparse
 import time
+from dataclasses import asdict
 
 from rag_lab.agentic_rag.graph import build_agentic_graph
 from rag_lab.config import load_settings
@@ -17,12 +18,13 @@ from rag_lab.db.connection import get_engine
 from rag_lab.db.vector_store import get_vector_store
 from rag_lab.evaluation.dataset import EVAL_EXAMPLES
 from rag_lab.evaluation.judges import JUDGE_NAMES
-from rag_lab.evaluation.runner import ExampleResult, evaluate_target, pass_rates
+from rag_lab.evaluation.runner import ExampleResult, evaluate_target, judge_metrics, pass_rates
 from rag_lab.evaluation.targets import agentic_target, langchain_target, langgraph_target
 from rag_lab.langchain_rag.chain import build_rag_chain
 from rag_lab.langchain_rag.retriever import build_retriever
 from rag_lab.langgraph_rag.graph import build_rag_graph
 from rag_lab.models import get_chat_model, get_embeddings, get_judge_model
+from rag_lab.tracking import enable_mlflow, log_results, mlflow_run, rag_params
 
 SYMBOL = {True: "pass", False: "FAIL", None: "n/a"}
 
@@ -64,14 +66,24 @@ def main() -> None:
     selected = args.targets or list(targets)
     examples = EVAL_EXAMPLES[: args.limit]
     judge_llm = get_judge_model(settings)
+    use_mlflow = enable_mlflow(settings, experiment="rag-evaluation")
     print(f"Answer model: {settings.llm_model} | judge model: {settings.judge_model} | {len(examples)} questions")
 
     summary = {}
     for name in selected:
-        start = time.perf_counter()
-        results = evaluate_target(targets[name], examples, judge_llm)
-        print_results(name, results, time.perf_counter() - start)
-        summary[name] = pass_rates(results)
+        # Inside the run, MLflow links every trace (RAG run and judge calls) to this run.
+        with mlflow_run(use_mlflow, run_name=f"judges-{name}"):
+            start = time.perf_counter()
+            results = evaluate_target(targets[name], examples, judge_llm)
+            print_results(name, results, time.perf_counter() - start)
+            summary[name] = pass_rates(results)
+            if use_mlflow:  # config as params, pass rates as metrics, every verdict as JSON artifact
+                log_results(
+                    params={**rag_params(settings), "target": name, "questions": len(results)},
+                    metrics=judge_metrics(results),
+                    details={"results": [asdict(result) for result in results]},
+                    details_file="judgments.json",
+                )
 
     print("\n=== Summary (passed / applicable)")
     print(f"  {'target':<12}" + "".join(f"{name[:19]:>20}" for name in JUDGE_NAMES))

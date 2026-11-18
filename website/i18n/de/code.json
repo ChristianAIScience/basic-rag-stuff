@@ -403,5 +403,17 @@
   },
   "home.chapter.judge.text": {
     "message": "RAG-Antworten mit LLM-Judges bewerten: Korrektheit, Relevanz, Belegtheit, Relevanz der Suche."
+  },
+  "home.chapter.metrics.title": {
+    "message": "11. Retrieval-Metriken: Hit@k und MRR"
+  },
+  "home.chapter.metrics.text": {
+    "message": "Zufällige Chunks mit LLM-erzeugten Fragen labeln und messen, wie weit oben jede Strategie sie einordnet."
+  },
+  "home.chapter.mlflow.title": {
+    "message": "12. MLflow"
+  },
+  "home.chapter.mlflow.text": {
+    "message": "Jeden LangChain-/LangGraph-Lauf tracen und Auswertungen vergleichen – MLflow-Server in Docker."
   }
 }

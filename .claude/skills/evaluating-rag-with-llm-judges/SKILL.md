@@ -1,6 +1,6 @@
 ---
 name: evaluating-rag-with-llm-judges
-description: Grades RAG answers with LLM-as-a-judge evaluators - correctness against reference answers, relevance, groundedness and retrieval relevance - and calibrates the judges against hand-labelled cases. Use when evaluating or comparing RAG implementations, adding a judge or evaluation questions, or investigating failed or doubtful judge verdicts.
+description: Grades RAG answers with LLM-as-a-judge evaluators - correctness against reference answers, relevance, groundedness and retrieval relevance - and calibrates the judges against hand-labelled cases. Use when evaluating or comparing RAG answer quality, adding a judge or evaluation questions, or investigating failed or doubtful judge verdicts.
 ---
 
 # Evaluating RAG with LLM judges
@@ -8,6 +8,7 @@ description: Grades RAG answers with LLM-as-a-judge evaluators - correctness aga
 Reference implementation: `rag_lab/evaluation/` - `dataset.py`, `prompts.py`, `judges.py`, `targets.py`, `runner.py`;
 examples `examples/evaluate_rag.py` and `examples/calibrate_judges.py`. Learner-facing explanation: `docs/10_llm_as_judge.md`.
 Design source: LangSmith tutorial "Evaluate a RAG application" (four binary judges).
+Copyable, self-contained version for other projects: [llm_judges_template.py](llm_judges_template.py) - schemas, prompts, the four judges, pass rates.
 
 ## Judge design rules
 
@@ -44,3 +45,5 @@ Write the reference answer by hand from the files in `data/` (never from a model
 3. Judge wrong → turn the case into a `CalibrationCase` and fix the prompt until `examples.calibrate_judges` agrees again.
 
 Judges see only their own aspect: a correct refusal ("not in the documents") passes correctness but may fail relevance. Report such combinations instead of "fixing" one judge to match another.
+
+Retrieval-level metrics without a judge (Hit@k, MRR) are covered by the `measuring-retrieval-with-hit-at-k-and-mrr` skill.

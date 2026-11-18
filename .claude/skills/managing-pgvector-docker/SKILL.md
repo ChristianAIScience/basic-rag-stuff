@@ -7,6 +7,7 @@ description: Sets up, resets, backs up and debugs the PostgreSQL + pgvector Dock
 
 Reference implementation: `docker-compose.yml`, `.env.example`, `rag_lab/db/connection.py`.
 The project runs PostgreSQL **only in Docker** (`pgvector/pgvector:pg17`). Windows-specific connection errors are covered by the local `troubleshooting-windows-env` skill when it exists (it is not part of the repository).
+Helper script: [pgvector_docker_tools.py](pgvector_docker_tools.py) - compose template, password change, backup/restore, row count (`python pgvector_docker_tools.py` for usage).
 
 ## Set up in a new project
 

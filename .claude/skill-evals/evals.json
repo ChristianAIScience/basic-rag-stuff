@@ -357,5 +357,98 @@
       "Does not tune one judge to match another without a calibration case",
       "Proposes a CalibrationCase if the judge is really wrong"
     ]
+  },
+  {
+    "skills": [
+      "measuring-retrieval-with-hit-at-k-and-mrr"
+    ],
+    "query": "Which retrieval strategy finds the right chunk most often?",
+    "files": [
+      "examples/evaluate_retrieval.py"
+    ],
+    "expected_behavior": [
+      "Generates or reuses evaluation_data/retrieval_dataset.json and asks to review the questions",
+      "Runs examples.evaluate_retrieval and compares Hit@k and MRR per strategy",
+      "Mentions that the metadata filter is an oracle upper bound and that scores are a lower bound"
+    ]
+  },
+  {
+    "skills": [
+      "measuring-retrieval-with-hit-at-k-and-mrr"
+    ],
+    "query": "evaluate_retrieval says labelled chunks are no longer in the database.",
+    "files": [],
+    "expected_behavior": [
+      "Explains that re-ingesting with other chunking changed the chunk ids",
+      "Regenerates the dataset with examples.generate_retrieval_dataset (same seed)",
+      "Does not edit chunk ids in the JSON by hand"
+    ]
+  },
+  {
+    "skills": [
+      "tracking-with-mlflow"
+    ],
+    "query": "Show me in MLflow what the agentic graph does for a question.",
+    "files": [
+      "examples/agentic_rag.py"
+    ],
+    "expected_behavior": [
+      "Checks the mlflow container is running and MLFLOW_TRACKING_URI matches MLFLOW_PORT",
+      "Runs examples.agentic_rag and points to the trace in experiment rag-examples",
+      "Does not import mlflow directly in the example"
+    ]
+  },
+  {
+    "skills": [
+      "tracking-with-mlflow"
+    ],
+    "query": "Log the PDF chunking statistics to MLflow.",
+    "files": [
+      "examples/pdf_chunking.py"
+    ],
+    "expected_behavior": [
+      "Uses enable_mlflow(..., tracing=False), mlflow_run and log_results from rag_lab.tracking",
+      "Keeps the example working without MLflow (use_mlflow flag)",
+      "Adds a mocked unit test and documents the experiment"
+    ]
+  },
+  {
+    "skills": [
+      "tracking-with-mlflow"
+    ],
+    "query": "docker compose up fails: ports are not available 5000",
+    "files": [
+      "docker-compose.yml",
+      ".env"
+    ],
+    "expected_behavior": [
+      "Identifies which container or process uses the port",
+      "Moves this project's MLflow to a free port via MLFLOW_PORT and MLFLOW_TRACKING_URI",
+      "Leaves the other container untouched"
+    ]
+  },
+  {
+    "skills": [
+      "measuring-retrieval-with-hit-at-k-and-mrr"
+    ],
+    "query": "I need Hit@k and MRR for the retriever in my other project - give me the code.",
+    "files": [],
+    "expected_behavior": [
+      "Points to retrieval_metrics_template.py and its dependency header",
+      "Explains that each question needs exactly one gold chunk id",
+      "Mentions reviewing generated questions and the lower-bound caveat"
+    ]
+  },
+  {
+    "skills": [
+      "building-langchain-rag-chains"
+    ],
+    "query": "Set up the same RAG chain in a new project.",
+    "files": [],
+    "expected_behavior": [
+      "Copies rag_chain_template.py instead of importing rag_lab",
+      "Installs the packages listed in its header",
+      "Runs the offline test snippet first"
+    ]
   }
 ]

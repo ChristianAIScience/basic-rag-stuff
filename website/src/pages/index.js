@@ -64,6 +64,16 @@ function getChapters() {
       title: translate({id: 'home.chapter.judge.title', message: '10. LLM-as-a-Judge'}),
       text: translate({id: 'home.chapter.judge.text', message: 'Grade RAG answers with LLM judges: correctness, relevance, groundedness, retrieval relevance.'}),
     },
+    {
+      path: '/docs/retrieval_metrics',
+      title: translate({id: 'home.chapter.metrics.title', message: '11. Retrieval Metrics: Hit@k and MRR'}),
+      text: translate({id: 'home.chapter.metrics.text', message: 'Label random chunks with LLM-generated questions and measure how high each strategy ranks them.'}),
+    },
+    {
+      path: '/docs/mlflow',
+      title: translate({id: 'home.chapter.mlflow.title', message: '12. MLflow'}),
+      text: translate({id: 'home.chapter.mlflow.text', message: 'Trace every LangChain/LangGraph run and compare evaluation runs - MLflow server in Docker.'}),
+    },
   ];
 }
 

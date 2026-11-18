@@ -39,3 +39,15 @@ def pass_rates(results: list[ExampleResult]) -> dict[str, tuple[int, int]]:
         verdicts = [j.passed for r in results for j in r.judgments if j.key == key and j.passed is not None]
         rates[key] = (sum(verdicts), len(verdicts))
     return rates
+
+
+def judge_metrics(results: list[ExampleResult]) -> dict[str, float]:
+    """Pass rates as MLflow metrics, e.g. {"correctness_pass_rate": 0.89, ...}.
+
+    Judges without a single applicable verdict are left out (no 0/0).
+    """
+    return {
+        f"{key}_pass_rate": passed / applicable
+        for key, (passed, applicable) in pass_rates(results).items()
+        if applicable
+    }

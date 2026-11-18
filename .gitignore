@@ -17,3 +17,6 @@ website/.docusaurus/
 
 # Machine-specific Claude skill - local only
 .claude/skills/troubleshooting-windows-env/
+
+# MLflow tracking data (Docker bind mount) - local only
+mlflow-data/

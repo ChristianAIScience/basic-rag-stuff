@@ -79,8 +79,12 @@ falsch ist – der Code oder die Erwartung.
 | `unit/test_agentic_nodes.py` | jeder agentische Node: Entscheidungen, Bewertung, Umformulierung, Fallback-Antwort |
 | `unit/test_agentic_graph.py` | komplette agentische Durchläufe: direkte Antwort, Antwort mit Suche, Wiederholungen bis zum Fallback |
 | `unit/test_evaluation.py` | LLM-Judges mit gefälschtem Judge: Prompts, Urteile, „nicht anwendbar", Bestehensquoten, Ziel-Adapter |
+| `unit/test_retrieval_metrics.py` | Hit@k, reziproker Rang, MRR, wiederholbare Chunk-Stichprobe, Labeln der Fragen |
+| `unit/test_tracking.py` | MLflow an/aus/nicht erreichbar, geloggte Parameter und Metriknamen (MLflow gemockt) |
 | `integration/test_vector_store.py` | echte Tabellenanlage, Einlesen ohne Duplikate, Metadaten-Filter in SQL |
 | `integration/test_retrieval_strategies.py` | alle fünf Strategien gegen echtes PostgreSQL |
+| `integration/test_retrieval_evaluation.py` | alle Chunks mit IDs lesen; Hit@1 = 1, wenn die Frage dem Chunk-Text entspricht |
+| `integration/test_mlflow_tracking.py` | ein Run mit Parametern, Metriken, Artefakt und verknüpftem LangChain-Trace auf dem echten MLflow-Server |
 | `integration/test_end_to_end.py` | echte OpenAI-Antworten und Judge-Kalibrierung (ohne Key übersprungen) |
 
 ## Testtechniken mit kurzen Beispielen

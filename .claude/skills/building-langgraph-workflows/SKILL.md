@@ -8,6 +8,7 @@ description: Builds LangGraph StateGraph workflows with a typed state, one file 
 Reference implementation: `rag_lab/langgraph_rag/state.py`, `nodes/retrieve_documents.py`, `nodes/generate_answer.py`, `graph.py`;
 example `examples/basic_langgraph_rag.py`. Learner-facing explanation: `docs/05_langgraph_rag.md`.
 The agentic graph follows the same conventions (`building-agentic-rag`).
+Copyable, self-contained version for other projects: [langgraph_rag_template.py](langgraph_rag_template.py) (dependencies in its header).
 
 ## Conventions
 

@@ -8,6 +8,7 @@ description: Splits PDFs into chapter and section chunks by detecting headings f
 Reference implementation: `rag_lab/ingestion/pdf_loader.py`, called by `loader.py` for every `.pdf`.
 Demo without database or API key: `uv run python -m examples.pdf_chunking [path.pdf] [max_heading_level]`.
 Sample PDF: `uv run python -m examples.create_sample_pdf`. Learner-facing explanation: `docs/08_pdf_chunking.md`.
+Copyable, self-contained version for other projects: [pdf_heading_chunker.py](pdf_heading_chunker.py) (also runnable: `python pdf_heading_chunker.py file.pdf [level]`).
 
 ## Algorithm
 

@@ -32,7 +32,8 @@ POSTGRES_PASSWORD=choose_a_password
 LLM_API_KEY=sk-...            # your OpenAI key (a placeholder is fine until step 5)
 ```
 
-Läuft auf deinem Rechner schon ein anderes PostgreSQL, ändere zusätzlich `POSTGRES_PORT` (z. B. auf `5433`).
+Läuft auf deinem Rechner schon ein anderes PostgreSQL, ändere zusätzlich `POSTGRES_PORT` (z. B. auf `5433`);
+ist Port 5000 belegt, ändere `MLFLOW_PORT` und `MLFLOW_TRACKING_URI` (z. B. auf `5001`).
 
 ## 3. Datenbank starten und Python installieren
 
@@ -41,7 +42,8 @@ docker compose up -d
 uv sync
 ```
 
-**Prüfen:** `docker compose ps` zeigt den Container `postgres` als `healthy`, und
+**Prüfen:** `docker compose ps` zeigt die Container `postgres` und `mlflow` als `healthy`
+(MLflow-Oberfläche: http://localhost:5000, siehe [12. MLflow](12_mlflow.md)), und
 
 ```bash
 uv run python -m pytest

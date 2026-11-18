@@ -26,6 +26,7 @@ class Settings:
     chunk_overlap: int
     vector_table: str
     vector_size: int
+    mlflow_tracking_uri: str  # empty = MLflow disabled
 
 
 def _require(name: str) -> str:
@@ -54,6 +55,7 @@ def load_settings() -> Settings:
         chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "50")),
         vector_table=os.getenv("VECTOR_TABLE", "documents"),
         vector_size=int(os.getenv("VECTOR_SIZE", "1536")),
+        mlflow_tracking_uri=os.getenv("MLFLOW_TRACKING_URI", ""),
     )
 
     if settings.chunk_overlap >= settings.chunk_size:

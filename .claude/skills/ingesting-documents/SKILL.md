@@ -8,6 +8,7 @@ description: Loads, cleans, splits, embeds and stores documents in the pgvector 
 Reference implementation, one module per step:
 `rag_lab/ingestion/loader.py` → `cleaner.py` → `splitter.py` → `pipeline.py` (chunk ids) → `embedder.py` → `rag_lab/db/vector_store.py`.
 Entry point: `uv run python -m examples.ingest_documents [--fake-embeddings]`. Learner-facing explanation: `docs/02_ingestion.md`.
+Copyable, self-contained version for other projects: [ingestion_template.py](ingestion_template.py) (dependencies in its header).
 
 ## Change or extend the pipeline
 

@@ -8,6 +8,7 @@ description: Maintains the Docusaurus documentation website in website/ that ren
 Reference implementation: `website/docusaurus.config.js`, `website/sidebars.js`, `website/src/pages/index.js`, `website/i18n/de/`.
 The site reads `../docs/*.md` directly: the Markdown files in `docs/` are the single source of truth for English.
 Versions: see `website/package.json`.
+Scaffolding script: [new_doc_chapter.py](new_doc_chapter.py) creates the English and German chapter files and prints the start-page card (steps 1-3 below).
 
 ## Add a chapter
 

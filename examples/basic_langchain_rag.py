@@ -13,6 +13,7 @@ from rag_lab.db.vector_store import get_vector_store
 from rag_lab.langchain_rag.chain import build_rag_chain
 from rag_lab.langchain_rag.retriever import build_retriever
 from rag_lab.models import get_chat_model, get_embeddings
+from rag_lab.tracking import enable_mlflow
 from rag_lab.utils.formatting import print_answer
 
 DEFAULT_QUESTION = "How many vacation days do I get, and how many can I carry over?"
@@ -21,6 +22,7 @@ DEFAULT_QUESTION = "How many vacation days do I get, and how many can I carry ov
 def main() -> None:
     question = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_QUESTION
     settings = load_settings()
+    enable_mlflow(settings, experiment="rag-examples")  # trace every run (optional)
 
     vector_store = get_vector_store(get_engine(settings), get_embeddings(settings), settings)
     chain = build_rag_chain(build_retriever(vector_store), get_chat_model(settings))

@@ -7,6 +7,7 @@ description: Builds and tests the agentic RAG graph in LangGraph - question anal
 
 Reference implementation: `rag_lab/agentic_rag/` - `state.py`, `prompts.py`, `nodes/` (five files), `routing.py`, `graph.py`;
 example `examples/agentic_rag.py`. Learner-facing explanation: `docs/06_agentic_rag.md`. Node conventions: `building-langgraph-workflows`.
+Copyable, self-contained version for other projects: [agentic_rag_template.py](agentic_rag_template.py) - state, schemas, nodes, routing and graph in one file.
 
 ## Design rules
 
