@@ -10,6 +10,11 @@ import styles from './index.module.css';
 function getChapters() {
   return [
     {
+      path: '/docs/quickstart',
+      title: translate({id: 'home.chapter.quickstart.title', message: 'Quickstart'}),
+      text: translate({id: 'home.chapter.quickstart.text', message: 'From zero to a first RAG answer in about ten minutes.'}),
+    },
+    {
       path: '/docs/setup',
       title: translate({id: 'home.chapter.setup.title', message: '1. Setup & Configuration'}),
       text: translate({id: 'home.chapter.setup.text', message: 'uv, Docker, .env and how settings reach every module.'}),
@@ -49,6 +54,16 @@ function getChapters() {
       title: translate({id: 'home.chapter.pdf.title', message: '8. PDF Chunking by Font Size'}),
       text: translate({id: 'home.chapter.pdf.text', message: 'Split PDFs into chapters and sections with pdfplumber.'}),
     },
+    {
+      path: '/docs/testing',
+      title: translate({id: 'home.chapter.testing.title', message: '9. Testing'}),
+      text: translate({id: 'home.chapter.testing.text', message: 'What the tests check, how to read their output, and how to write your own.'}),
+    },
+    {
+      path: '/docs/llm_as_judge',
+      title: translate({id: 'home.chapter.judge.title', message: '10. LLM-as-a-Judge'}),
+      text: translate({id: 'home.chapter.judge.text', message: 'Grade RAG answers with LLM judges: correctness, relevance, groundedness, retrieval relevance.'}),
+    },
   ];
 }
 
@@ -71,9 +86,14 @@ export default function Home() {
       <header className={styles.hero}>
         <h1>RAG Learning Lab</h1>
         <p>{tagline}</p>
-        <Link className="button button--primary button--lg" to="/docs/setup">
-          {translate({id: 'home.startButton', message: 'Start with chapter 1'})}
-        </Link>
+        <div className={styles.buttons}>
+          <Link className="button button--primary button--lg" to="/docs/quickstart">
+            {translate({id: 'home.quickstartButton', message: 'Quickstart'})}
+          </Link>
+          <Link className="button button--secondary button--lg" to="/docs/setup">
+            {translate({id: 'home.startButton', message: 'Start with chapter 1'})}
+          </Link>
+        </div>
       </header>
       <main className={styles.chapters}>
         {getChapters().map((chapter) => (

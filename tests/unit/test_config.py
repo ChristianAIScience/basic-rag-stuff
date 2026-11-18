@@ -26,6 +26,15 @@ def test_defaults_are_applied(minimal_env):
     assert settings.chunk_overlap == 50
 
 
+def test_judge_model_defaults_to_llm_model_and_can_be_overridden(minimal_env, monkeypatch):
+    monkeypatch.setenv("LLM_MODEL", "model-a")
+    monkeypatch.delenv("JUDGE_MODEL", raising=False)
+    assert load_settings().judge_model == "model-a"
+
+    monkeypatch.setenv("JUDGE_MODEL", "model-b")
+    assert load_settings().judge_model == "model-b"
+
+
 def test_values_are_read_from_environment(minimal_env, monkeypatch):
     monkeypatch.setenv("POSTGRES_PORT", "6543")
     monkeypatch.setenv("CHUNK_SIZE", "800")

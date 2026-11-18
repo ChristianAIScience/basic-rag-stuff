@@ -382,5 +382,26 @@
   },
   "home.chapter.pdf.text": {
     "message": "PDFs mit pdfplumber in Kapitel und Abschnitte aufteilen."
+  },
+  "home.chapter.quickstart.title": {
+    "message": "Schnellstart"
+  },
+  "home.chapter.quickstart.text": {
+    "message": "In etwa zehn Minuten von null zur ersten RAG-Antwort."
+  },
+  "home.chapter.testing.title": {
+    "message": "9. Tests"
+  },
+  "home.chapter.testing.text": {
+    "message": "Was die Tests prüfen, wie man ihre Ausgabe liest und eigene Tests schreibt."
+  },
+  "home.quickstartButton": {
+    "message": "Schnellstart"
+  },
+  "home.chapter.judge.title": {
+    "message": "10. LLM-as-a-Judge"
+  },
+  "home.chapter.judge.text": {
+    "message": "RAG-Antworten mit LLM-Judges bewerten: Korrektheit, Relevanz, Belegtheit, Relevanz der Suche."
   }
 }

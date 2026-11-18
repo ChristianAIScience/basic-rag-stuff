@@ -16,3 +16,12 @@ def get_embeddings(settings: Settings) -> OpenAIEmbeddings:
 
 def get_chat_model(settings: Settings) -> ChatOpenAI:
     return ChatOpenAI(model=settings.llm_model, api_key=settings.llm_api_key)
+
+
+def get_judge_model(settings: Settings) -> ChatOpenAI:
+    """The LLM that grades answers. temperature=0 makes grading as repeatable as possible.
+
+    Reasoning models such as gpt-5 accept only their default temperature; langchain-openai
+    then drops the value silently, so this works with every model.
+    """
+    return ChatOpenAI(model=settings.judge_model, api_key=settings.llm_api_key, temperature=0)

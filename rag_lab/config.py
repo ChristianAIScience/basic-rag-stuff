@@ -21,6 +21,7 @@ class Settings:
     llm_api_key: str
     embedding_model: str
     llm_model: str
+    judge_model: str
     chunk_size: int
     chunk_overlap: int
     vector_table: str
@@ -38,6 +39,7 @@ def load_settings() -> Settings:
     """Read settings from the environment. Values in .env never override real env vars."""
     load_dotenv()
 
+    llm_model = os.getenv("LLM_MODEL", "gpt-5-mini")
     settings = Settings(
         postgres_host=os.getenv("POSTGRES_HOST", "localhost"),
         postgres_port=int(os.getenv("POSTGRES_PORT", "5432")),
@@ -46,7 +48,8 @@ def load_settings() -> Settings:
         postgres_password=_require("POSTGRES_PASSWORD"),
         llm_api_key=_require("LLM_API_KEY"),
         embedding_model=os.getenv("EMBEDDING_MODEL", "text-embedding-3-small"),
-        llm_model=os.getenv("LLM_MODEL", "gpt-5-mini"),
+        llm_model=llm_model,
+        judge_model=os.getenv("JUDGE_MODEL", llm_model),  # the LLM that grades answers (LLM-as-a-judge)
         chunk_size=int(os.getenv("CHUNK_SIZE", "500")),
         chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "50")),
         vector_table=os.getenv("VECTOR_TABLE", "documents"),

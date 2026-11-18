@@ -10,6 +10,13 @@
   font-size: 1.2rem;
 }
 
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
 .chapters {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));

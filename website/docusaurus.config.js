@@ -60,6 +60,7 @@ const config = {
       navbar: {
         title: 'RAG Learning Lab',
         items: [
+          {type: 'doc', docId: 'quickstart', position: 'left', label: 'Quickstart'},
           {type: 'docSidebar', sidebarId: 'learningPath', position: 'left', label: 'Learning path'},
           {type: 'localeDropdown', position: 'right'},
         ],

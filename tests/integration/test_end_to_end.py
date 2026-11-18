@@ -47,6 +47,20 @@ def test_langchain_and_langgraph_answer_from_the_documents(openai_store):
     assert any(doc.metadata["category"] == "hr" for doc in chain_result["sources"])
 
 
+def test_judges_agree_with_hand_labelled_calibration_cases(settings):
+    if settings.llm_api_key.startswith("your_"):
+        pytest.skip("LLM_API_KEY in .env is still the placeholder")
+    from examples.calibrate_judges import run_case
+    from rag_lab.evaluation.dataset import CALIBRATION_CASES
+    from rag_lab.models import get_judge_model
+
+    llm = get_judge_model(settings)
+    agreements = sum(run_case(llm, case).passed == case.expected for case in CALIBRATION_CASES)
+
+    # The cases are obvious; allow one disagreement because LLM verdicts are not fully deterministic.
+    assert agreements >= len(CALIBRATION_CASES) - 1
+
+
 def test_agentic_rag_falls_back_for_unknown_topics(openai_store):
     store, settings = openai_store
     graph = build_agentic_graph(build_retriever(store), get_chat_model(settings))

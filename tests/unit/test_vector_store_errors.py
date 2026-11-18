@@ -11,7 +11,7 @@ from rag_lab.db.vector_store import ensure_table
 
 SETTINGS = Settings(
     postgres_host="db", postgres_port=5433, postgres_db="rag", postgres_user="user",
-    postgres_password="p@ss/word", llm_api_key="sk", embedding_model="e", llm_model="m",
+    postgres_password="p@ss/word", llm_api_key="sk", embedding_model="e", llm_model="m", judge_model="m",
     chunk_size=500, chunk_overlap=50, vector_table="documents", vector_size=1536,
 )
 

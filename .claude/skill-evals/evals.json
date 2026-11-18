@@ -317,5 +317,45 @@
       "Suggests npm start -- --locale de, or npm run build + npm run serve for the switch",
       "Does not change the i18n configuration"
     ]
+  },
+  {
+    "skills": [
+      "evaluating-rag-with-llm-judges"
+    ],
+    "query": "Which of my three RAG implementations gives the best answers?",
+    "files": [
+      "examples/evaluate_rag.py"
+    ],
+    "expected_behavior": [
+      "Runs examples.calibrate_judges before trusting scores",
+      "Runs examples.evaluate_rag (optionally with --limit first) and compares pass rates per judge",
+      "Reads the reasoning of failed verdicts before concluding"
+    ]
+  },
+  {
+    "skills": [
+      "evaluating-rag-with-llm-judges"
+    ],
+    "query": "Add a judge that checks whether the answer cites its source file.",
+    "files": [
+      "rag_lab/evaluation/judges.py"
+    ],
+    "expected_behavior": [
+      "Schema with explanation as first field and a bool verdict",
+      "Adds one good and one bad CalibrationCase and unit tests with a fake judge",
+      "Updates JUDGE_NAMES, run_all_judges and the docs chapter in both languages"
+    ]
+  },
+  {
+    "skills": [
+      "evaluating-rag-with-llm-judges"
+    ],
+    "query": "The relevance judge fails the agent's answer to the dogs question. Fix the judge.",
+    "files": [],
+    "expected_behavior": [
+      "Explains that a correct refusal can fail relevance while passing correctness",
+      "Does not tune one judge to match another without a calibration case",
+      "Proposes a CalibrationCase if the judge is really wrong"
+    ]
   }
 ]
