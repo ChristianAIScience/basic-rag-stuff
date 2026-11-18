@@ -1,0 +1,35 @@
+[project]
+name = "rag-lab"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "asyncpg>=0.32.0",
+    "langchain-core>=1.8.2",
+    "langchain-openai>=1.8.1",
+    "langchain-postgres>=0.0.19",
+    "langchain-text-splitters>=1.1.3",
+    "langgraph>=1.2.22",
+    "pdfplumber>=0.11.10",
+    "python-dotenv>=1.2.4",
+]
+
+[dependency-groups]
+dev = [
+    "fpdf2>=2.9.0",
+    "pytest>=9.2.0",
+]
+
+[tool.uv]
+# Windows Smart App Control blocks the native DLLs of xxhash>=4 and ormsgpack 1.13
+# (not yet "reputable"). These older wheels are allowed and are compatible.
+constraint-dependencies = ["xxhash<4", "ormsgpack<1.13"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+# Unit tests run by default. Integration tests need Docker Postgres:
+#   uv run python -m pytest -m integration
+addopts = "-m 'not integration'"
+markers = ["integration: needs a running PostgreSQL (docker compose up -d)"]
+# Silence a Python 3.14 deprecation warning inside the third-party langsmith package
+filterwarnings = ["ignore::DeprecationWarning:langsmith.*"]

@@ -1,0 +1,22 @@
+# PostgreSQL 17 with the pgvector extension preinstalled.
+# Start:  docker compose up -d
+# Stop:   docker compose down
+#
+# The database files are stored in ./postgres-data in this project folder, so they survive
+# `docker compose down`, deleting the container and even reinstalling Docker.
+# Reset (deletes all stored embeddings): docker compose down, then delete ./postgres-data
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rag_learning}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 2s
+      retries: 15

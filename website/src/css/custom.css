@@ -1,0 +1,30 @@
+/* Theme colours (Infima variables used by Docusaurus). */
+
+:root {
+  --ifm-color-primary: #2b6cb0;
+  --ifm-color-primary-dark: #27619e;
+  --ifm-color-primary-darker: #245c96;
+  --ifm-color-primary-darkest: #1e4b7b;
+  --ifm-color-primary-light: #2f77c2;
+  --ifm-color-primary-lighter: #317cca;
+  --ifm-color-primary-lightest: #4a8fd6;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #63a4e8;
+  --ifm-color-primary-dark: #4895e4;
+  --ifm-color-primary-darker: #3b8de2;
+  --ifm-color-primary-darkest: #1f74cc;
+  --ifm-color-primary-light: #7eb3ec;
+  --ifm-color-primary-lighter: #8bbbee;
+  --ifm-color-primary-lightest: #b2d2f4;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Wide tables (strategy comparisons) scroll instead of breaking the layout. */
+.markdown table {
+  display: block;
+  overflow-x: auto;
+}

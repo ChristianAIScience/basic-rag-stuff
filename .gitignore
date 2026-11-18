@@ -1,0 +1,16 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# PostgreSQL database files (Docker bind mount) - local only, not for git
+postgres-data/
+
+# Documentation website (Docusaurus)
+website/node_modules/
+website/build/
+website/.docusaurus/

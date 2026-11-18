@@ -1,0 +1,10 @@
+{
+  "title": {
+    "message": "RAG Learning Lab",
+    "description": "The title in the navbar"
+  },
+  "item.label.Learning path": {
+    "message": "Lernpfad",
+    "description": "Navbar item with label Learning path"
+  }
+}
