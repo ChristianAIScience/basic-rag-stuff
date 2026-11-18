@@ -1,4 +1,4 @@
-# 10. LLM-as-a-Judge: RAG-Antworten bewerten
+# 12. LLM-as-a-Judge: RAG-Antworten bewerten
 
 ## Was
 
@@ -78,13 +78,13 @@ Solche Urteile zählen nicht zur Bestehensquote.
 |---|---|
 | `evaluation/dataset.py` | 9 Fragen mit von Menschen geschriebenen Referenzantworten (eine bewusst nicht in den Dokumenten), dazu Kalibrierungsfälle |
 | `evaluation/prompts.py` | die vier Judge-Prompts und Ausgabeschemas |
-| `evaluation/judges.py` | eine Funktion pro Judge, `run_all_judges()` |
+| `evaluation/judges.py` | eine Funktion pro Judge, `run_judge()` (ein Judge nach Name), `run_all_judges()` |
 | `evaluation/targets.py` | Adapter: Chain, Graph und agentischer Graph → `question -> {"answer", "documents"}` |
 | `evaluation/runner.py` | führt ein Ziel über den Datensatz aus, `pass_rates()` |
 
 ## Wie es zusammenhängt
 
-Die Judges bewerten die drei Umsetzungen aus Kapitel 4–6 mit denselben Fragen, deren Qualität lässt sich also direkt
+Die Judges bewerten die drei Umsetzungen aus Kapitel 5–7 mit denselben Fragen, deren Qualität lässt sich also direkt
 vergleichen. Beim agentischen Graphen sind `documents` nur die Chunks, die er als relevant bewertet hat – genau das,
 woraus seine Antwort entstand.
 

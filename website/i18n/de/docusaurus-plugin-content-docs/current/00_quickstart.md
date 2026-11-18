@@ -43,7 +43,7 @@ uv sync
 ```
 
 **Prüfen:** `docker compose ps` zeigt die Container `postgres` und `mlflow` als `healthy`
-(MLflow-Oberfläche: http://localhost:5000, siehe [12. MLflow](12_mlflow.md)), und
+(MLflow-Oberfläche: http://localhost:5000, siehe [10. MLflow](10_mlflow.md)), und
 
 ```bash
 uv run python -m pytest
@@ -99,8 +99,8 @@ npm start                                      # http://localhost:3000
 |---|---|
 | Die Konfiguration verstehen | [1. Setup & Konfiguration](01_setup.md) |
 | Sehen, wie aus Dokumenten Vektoren werden | [2. Dokumente einlesen](02_ingestion.md) |
-| Suchverfahren vergleichen | [3. Retrieval-Strategien](03_retrieval.md) |
-| Die RAG-Pipeline bauen | [4. LangChain](04_langchain_rag.md), [5. LangGraph](05_langgraph_rag.md), [6. Agentic RAG](06_agentic_rag.md) |
+| Suchverfahren vergleichen | [4. Retrieval-Strategien](04_retrieval.md) |
+| Die RAG-Pipeline bauen | [5. LangChain](05_langchain_rag.md), [6. LangGraph](06_langgraph_rag.md), [7. Agentic RAG](07_agentic_rag.md) |
 | Tests verstehen und schreiben | [9. Tests](09_testing.md) |
 
 ## Häufige Probleme

@@ -1,4 +1,4 @@
-# 8. PDF-Chunking nach Schriftgröße (pdfplumber)
+# 3. PDF-Chunking nach Schriftgröße (pdfplumber)
 
 ## Was
 

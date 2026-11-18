@@ -51,14 +51,14 @@ def evaluate_retriever(
     if not examples:
         raise ValueError("No examples to evaluate - generate the retrieval dataset first.")
     cutoff = max(k_values)
-    gold_ranks = [gold_rank(retriever(example.question), example.chunk_id, cutoff) for example in examples]
+    # One retrieval per question; every metric is computed from the same ranked list.
+    runs = [(retriever(example.question), example.chunk_id) for example in examples]
 
-    # Every metric follows from the gold rank: Hit@k = rank <= k, reciprocal rank = 1 / rank.
     count = len(examples)
     return RetrievalScores(
-        hit_at={k: sum(1 for rank in gold_ranks if rank is not None and rank <= k) / count for k in k_values},
-        mrr=sum(1 / rank for rank in gold_ranks if rank is not None) / count,
-        gold_ranks=gold_ranks,
+        hit_at={k: sum(hit_at_k(ranked, gold, k) for ranked, gold in runs) / count for k in k_values},
+        mrr=sum(reciprocal_rank(ranked, gold, cutoff) for ranked, gold in runs) / count,
+        gold_ranks=[gold_rank(ranked, gold, cutoff) for ranked, gold in runs],
     )
 
 

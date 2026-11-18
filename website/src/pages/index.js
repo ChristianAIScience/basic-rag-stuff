@@ -25,34 +25,34 @@ function getChapters() {
       text: translate({id: 'home.chapter.ingestion.text', message: 'Load, clean, split, embed and store - and how pgvector stores vectors.'}),
     },
     {
+      path: '/docs/pdf_chunking',
+      title: translate({id: 'home.chapter.pdf.title', message: '3. PDF Chunking by Font Size'}),
+      text: translate({id: 'home.chapter.pdf.text', message: 'Split PDFs into chapters and sections with pdfplumber.'}),
+    },
+    {
       path: '/docs/retrieval',
-      title: translate({id: 'home.chapter.retrieval.title', message: '3. Retrieval Strategies'}),
+      title: translate({id: 'home.chapter.retrieval.title', message: '4. Retrieval Strategies'}),
       text: translate({id: 'home.chapter.retrieval.text', message: 'Similarity, MMR, score threshold, metadata filter and hybrid search.'}),
     },
     {
       path: '/docs/langchain_rag',
-      title: translate({id: 'home.chapter.langchain.title', message: '4. LangChain RAG Chain'}),
+      title: translate({id: 'home.chapter.langchain.title', message: '5. LangChain RAG Chain'}),
       text: translate({id: 'home.chapter.langchain.text', message: 'A fixed pipeline built with LCEL: retriever, prompt, LLM.'}),
     },
     {
       path: '/docs/langgraph_rag',
-      title: translate({id: 'home.chapter.langgraph.title', message: '5. LangGraph RAG Workflow'}),
+      title: translate({id: 'home.chapter.langgraph.title', message: '6. LangGraph RAG Workflow'}),
       text: translate({id: 'home.chapter.langgraph.text', message: 'The same pipeline as a graph: state, nodes and edges.'}),
     },
     {
       path: '/docs/agentic_rag',
-      title: translate({id: 'home.chapter.agentic.title', message: '6. Agentic RAG'}),
+      title: translate({id: 'home.chapter.agentic.title', message: '7. Agentic RAG'}),
       text: translate({id: 'home.chapter.agentic.text', message: 'A graph that decides, grades documents, rewrites queries and retries.'}),
     },
     {
       path: '/docs/comparison',
-      title: translate({id: 'home.chapter.comparison.title', message: '7. Comparison'}),
+      title: translate({id: 'home.chapter.comparison.title', message: '8. Comparison'}),
       text: translate({id: 'home.chapter.comparison.text', message: 'LangChain vs. LangGraph, deterministic vs. agentic RAG.'}),
-    },
-    {
-      path: '/docs/pdf_chunking',
-      title: translate({id: 'home.chapter.pdf.title', message: '8. PDF Chunking by Font Size'}),
-      text: translate({id: 'home.chapter.pdf.text', message: 'Split PDFs into chapters and sections with pdfplumber.'}),
     },
     {
       path: '/docs/testing',
@@ -60,9 +60,9 @@ function getChapters() {
       text: translate({id: 'home.chapter.testing.text', message: 'What the tests check, how to read their output, and how to write your own.'}),
     },
     {
-      path: '/docs/llm_as_judge',
-      title: translate({id: 'home.chapter.judge.title', message: '10. LLM-as-a-Judge'}),
-      text: translate({id: 'home.chapter.judge.text', message: 'Grade RAG answers with LLM judges: correctness, relevance, groundedness, retrieval relevance.'}),
+      path: '/docs/mlflow',
+      title: translate({id: 'home.chapter.mlflow.title', message: '10. MLflow'}),
+      text: translate({id: 'home.chapter.mlflow.text', message: 'Trace every LangChain/LangGraph run and compare evaluation runs - MLflow server in Docker.'}),
     },
     {
       path: '/docs/retrieval_metrics',
@@ -70,9 +70,9 @@ function getChapters() {
       text: translate({id: 'home.chapter.metrics.text', message: 'Label random chunks with LLM-generated questions and measure how high each strategy ranks them.'}),
     },
     {
-      path: '/docs/mlflow',
-      title: translate({id: 'home.chapter.mlflow.title', message: '12. MLflow'}),
-      text: translate({id: 'home.chapter.mlflow.text', message: 'Trace every LangChain/LangGraph run and compare evaluation runs - MLflow server in Docker.'}),
+      path: '/docs/llm_as_judge',
+      title: translate({id: 'home.chapter.judge.title', message: '12. LLM-as-a-Judge'}),
+      text: translate({id: 'home.chapter.judge.text', message: 'Grade RAG answers with LLM judges: correctness, relevance, groundedness, retrieval relevance.'}),
     },
   ];
 }

@@ -74,13 +74,24 @@ def judge_retrieval_relevance(llm: BaseChatModel, question: str, documents: list
     return JudgeResult("retrieval_relevance", grade.relevant, grade.explanation)
 
 
+def run_judge(
+    name: str, llm: BaseChatModel, question: str, answer: str, documents: list[Document], reference_answer: str
+) -> JudgeResult:
+    """Run one judge by name. Every judge gets the same inputs and uses only those it grades."""
+    match name:
+        case "correctness":
+            return judge_correctness(llm, question, answer, reference_answer)
+        case "relevance":
+            return judge_relevance(llm, question, answer)
+        case "groundedness":
+            return judge_groundedness(llm, answer, documents)
+        case "retrieval_relevance":
+            return judge_retrieval_relevance(llm, question, documents)
+    raise ValueError(f"Unknown judge: {name!r} (known: {', '.join(JUDGE_NAMES)})")
+
+
 def run_all_judges(
     llm: BaseChatModel, question: str, answer: str, documents: list[Document], reference_answer: str
 ) -> list[JudgeResult]:
     """All four judges for one answer, in the order of JUDGE_NAMES."""
-    return [
-        judge_correctness(llm, question, answer, reference_answer),
-        judge_relevance(llm, question, answer),
-        judge_groundedness(llm, answer, documents),
-        judge_retrieval_relevance(llm, question, documents),
-    ]
+    return [run_judge(name, llm, question, answer, documents, reference_answer) for name in JUDGE_NAMES]

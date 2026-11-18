@@ -1,7 +1,9 @@
-# 3. Retrieval Strategies
+# 4. Retrieval Strategies
 
 Each strategy lives in its own module in `rag_lab/retrieval/` and has the same shape:
 `strategy(vector_store, query, ...) -> list[(Document, score)]`.
+`build_strategies()` in `retrieval/comparison.py` lists all five with their settings; the comparison
+below and the Hit@k/MRR evaluation of chapter 11 both run that list.
 
 | # | Module | Idea | Score returned |
 |---|---|---|---|
@@ -54,11 +56,11 @@ uv run python -m examples.compare_retrievers "How many vacation days do I get?" 
 ## Expected output (shape)
 
 ```
-=== 1. Similarity search  (4 chunks, 350 ms)
+=== similarity  (4 chunks, 350 ms)
     score: cosine distance (lower = more similar)
      0.412  [it_support/vpn_setup.md]  ## Common Problems  If the connection drops ...
 ...
-=== 5. Hybrid (full-text + vector, RRF)  (4 chunks, 120 ms)
+=== hybrid (RRF)  (4 chunks, 120 ms)
     score: RRF score (rank-based, higher = better)
      0.033  [it_support/vpn_setup.md]  ## Common Problems ...
 ```

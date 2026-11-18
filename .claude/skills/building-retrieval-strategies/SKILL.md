@@ -7,7 +7,7 @@ description: Implements and compares pgvector retrieval strategies - similarity 
 
 Reference implementation: one module per strategy in `rag_lab/retrieval/`. Each exports one function
 `(vector_store, query, ...) -> list[tuple[Document, float | None]]` and a `SCORE_LABEL` string.
-Comparison: `rag_lab/retrieval/comparison.py` + `examples/compare_retrievers.py`. Learner-facing explanation: `docs/03_retrieval.md`.
+Strategy list: `build_strategies()` in `rag_lab/retrieval/comparison.py`, the single list that `examples/compare_retrievers.py` and `examples/evaluate_retrieval.py` both run. Learner-facing explanation: `docs/04_retrieval.md`.
 Copyable, self-contained version for other projects: [retrieval_strategies_template.py](retrieval_strategies_template.py) (dependencies in its header).
 
 ## Score semantics
@@ -36,9 +36,9 @@ Run the unit tests after every edit. Copy this checklist:
 
 ```
 - [ ] 1. New module in rag_lab/retrieval/ with SCORE_LABEL + one function; docstring: how it works, limits
-- [ ] 2. Register it in examples/compare_retrievers.py via run_strategy(...)
-- [ ] 3. Unit test with a MagicMock store asserting the exact call (tests/unit/test_retrieval_config.py)
+- [ ] 2. Add one Strategy entry to build_strategies() in rag_lab/retrieval/comparison.py (comparison and Hit@k/MRR evaluation both pick it up)
+- [ ] 3. Unit test with a MagicMock store asserting the exact call; extend the build_strategies tests (tests/unit/test_retrieval_config.py)
 - [ ] 4. Integration test with fake embeddings (tests/integration/test_retrieval_strategies.py)
 - [ ] 5. uv run python -m pytest and -m integration -> fix and repeat until green
-- [ ] 6. Add rows to docs/03_retrieval.md, docs/07_comparison.md and their German copies (maintaining-docs-website)
+- [ ] 6. Add rows to docs/04_retrieval.md, docs/08_comparison.md and their German copies (maintaining-docs-website)
 ```

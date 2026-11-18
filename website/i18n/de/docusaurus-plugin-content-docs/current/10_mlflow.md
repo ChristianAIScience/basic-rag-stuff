@@ -1,4 +1,4 @@
-# 12. MLflow: Tracing und Experiment-Tracking
+# 10. MLflow: Tracing und Experiment-Tracking
 
 ## Was
 
@@ -93,7 +93,7 @@ MLflow-Metriknamen dürfen kein `@` enthalten, deshalb wird Hit@1 als `hit_at_1`
 ## Wie es zusammenhängt
 
 MLflow beobachtet den vorhandenen Code – an den RAG-Chains und -Graphen ändert sich nichts. `autolog()` hängt sich in
-das Callback-System von LangChain, das auch LangGraph nutzt. Die Auswertungen aus Kapitel 10 und 11 bestimmen, *was*
+das Callback-System von LangChain, das auch LangGraph nutzt. Die Auswertungen der nächsten beiden Kapitel (11 und 12) bestimmen, *was*
 gemessen wird; MLflow speichert die Ergebnisse, damit man sie vergleichen kann.
 
 ## Ausführen
@@ -138,7 +138,7 @@ MLflow: server not reachable at http://localhost:5000 - continuing without MLflo
 - Weil auch jeder Judge-Aufruf aufgezeichnet wird, sind die Traces in `rag-evaluation` groß – nützlich, um ein zweifelhaftes
   Urteil zu untersuchen.
 - MLflow hat auch eigene LLM-Judges (`mlflow.genai.evaluate` mit Scorern wie `RetrievalGroundedness`). Sie brauchen
-  lokal das volle Paket `mlflow`; dieses Projekt behält seine eigenen Judges (Kapitel 10) und nutzt MLflow zum Speichern
+  lokal das volle Paket `mlflow`; dieses Projekt behält seine eigenen Judges (Kapitel 12) und nutzt MLflow zum Speichern
   und Vergleichen.
 - `rag_lab/tracking.py` setzt `MLFLOW_SUPPRESS_PRINTING_URL_TO_STDOUT`, weil MLflows eigene Run-Links Emojis enthalten,
   die in Windows-Konsolen mit alter Codepage fehlschlagen; die Beispiele geben den Link selbst aus.

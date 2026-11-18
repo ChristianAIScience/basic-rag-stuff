@@ -1,4 +1,4 @@
-# 8. PDF Chunking by Font Size (pdfplumber)
+# 3. PDF Chunking by Font Size (pdfplumber)
 
 ## What
 

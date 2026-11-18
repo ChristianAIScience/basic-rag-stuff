@@ -6,7 +6,7 @@ description: Builds and tests the LCEL RAG chain (retriever, prompt, LLM) that r
 # Building LangChain RAG chains (LCEL)
 
 Reference implementation: `rag_lab/langchain_rag/retriever.py`, `prompt.py`, `chain.py`; example `examples/basic_langchain_rag.py`.
-Learner-facing explanation: `docs/04_langchain_rag.md`.
+Learner-facing explanation: `docs/05_langchain_rag.md`.
 Copyable, self-contained version for other projects: [rag_chain_template.py](rag_chain_template.py) (includes an offline test snippet).
 
 ## Shape

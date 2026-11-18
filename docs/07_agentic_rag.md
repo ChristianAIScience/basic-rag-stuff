@@ -1,4 +1,4 @@
-# 6. Agentic RAG with LangGraph
+# 7. Agentic RAG with LangGraph
 
 ## What
 

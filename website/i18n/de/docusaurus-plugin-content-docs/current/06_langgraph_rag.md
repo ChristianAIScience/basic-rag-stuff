@@ -1,4 +1,4 @@
-# 5. LangGraph-RAG-Workflow
+# 6. LangGraph-RAG-Workflow
 
 ## Was
 

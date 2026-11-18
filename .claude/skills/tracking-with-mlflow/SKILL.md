@@ -6,7 +6,7 @@ description: Traces LangChain/LangGraph runs and logs evaluation runs (params, m
 # Tracking with MLflow
 
 Reference implementation: `rag_lab/tracking.py` (the only module that imports `mlflow`), service `mlflow` in `docker-compose.yml`;
-used by `examples/evaluate_rag.py`, `examples/evaluate_retrieval.py` and the three RAG examples. Explanation: `docs/12_mlflow.md`.
+used by `examples/evaluate_rag.py`, `examples/evaluate_retrieval.py` and the three RAG examples. Explanation: `docs/10_mlflow.md`.
 Copyable, self-contained version for other projects: [mlflow_tracking_template.py](mlflow_tracking_template.py) (includes the docker-compose service).
 
 ## Rules
@@ -26,7 +26,7 @@ Copyable, self-contained version for other projects: [mlflow_tracking_template.p
 - [ ] 3. if use_mlflow: log_results(params=..., metrics=..., details=...)
 - [ ] 4. Unit test with mlflow mocked (tests/unit/test_tracking.py pattern: monkeypatch tracking.mlflow)
 - [ ] 5. uv run python -m pytest, then -m integration with docker compose up -d -> fix and repeat until green
-- [ ] 6. Run the example and check the run in the UI; document the experiment in docs/12_mlflow.md + German copy
+- [ ] 6. Run the example and check the run in the UI; document the experiment in docs/10_mlflow.md + German copy
 ```
 
 ## Troubleshooting

@@ -6,7 +6,7 @@ description: Builds and tests the agentic RAG graph in LangGraph - question anal
 # Building agentic RAG (LangGraph)
 
 Reference implementation: `rag_lab/agentic_rag/` - `state.py`, `prompts.py`, `nodes/` (five files), `routing.py`, `graph.py`;
-example `examples/agentic_rag.py`. Learner-facing explanation: `docs/06_agentic_rag.md`. Node conventions: `building-langgraph-workflows`.
+example `examples/agentic_rag.py`. Learner-facing explanation: `docs/07_agentic_rag.md`. Node conventions: `building-langgraph-workflows`.
 Copyable, self-contained version for other projects: [agentic_rag_template.py](agentic_rag_template.py) - state, schemas, nodes, routing and graph in one file.
 
 ## Design rules
@@ -17,7 +17,7 @@ Copyable, self-contained version for other projects: [agentic_rag_template.py](a
 - **Grade against the original `question`**, search with `search_query` (the rewritten one).
 - `analyze_question` initialises `search_query`, `retry_count`, `relevant_documents`; the state is `TypedDict, total=False`.
 - Each node docstring is labelled `[LLM decision]`, `[LLM generates text]` or `[deterministic]`.
-- Worst-case LLM calls: 1 analysis + k gradings × (max_retries + 1) retrievals + max_retries rewrites + 1 answer. Update `docs/06_agentic_rag.md` when this changes.
+- Worst-case LLM calls: 1 analysis + k gradings × (max_retries + 1) retrievals + max_retries rewrites + 1 answer. Update `docs/07_agentic_rag.md` when this changes.
 
 ## Test doubles (offline)
 

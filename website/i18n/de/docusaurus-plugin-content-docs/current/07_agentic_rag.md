@@ -1,4 +1,4 @@
-# 6. Agentic RAG mit LangGraph
+# 7. Agentic RAG mit LangGraph
 
 ## Was
 

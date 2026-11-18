@@ -14,6 +14,7 @@ from rag_lab.evaluation.judges import (
     judge_relevance,
     judge_retrieval_relevance,
     run_all_judges,
+    run_judge,
 )
 from rag_lab.evaluation.prompts import (
     CorrectnessGrade,
@@ -97,6 +98,22 @@ def test_run_all_judges_returns_one_result_per_judge_in_fixed_order():
     results = run_all_judges(llm, "q", "a", [DOC], "reference")
     assert [r.key for r in results] == JUDGE_NAMES
     assert [r.passed for r in results] == [True, True, False, True]
+
+
+def test_run_judge_passes_each_judge_only_the_inputs_it_grades():
+    llm = judge_llm(GroundednessGrade(explanation="x", grounded=True))
+
+    result = run_judge("groundedness", llm, "the question", "the answer", [DOC], "the reference")
+
+    assert result == JudgeResult("groundedness", True, "x")
+    prompt = sent_prompt(llm)
+    assert "STUDENT ANSWER: the answer" in prompt and "[Source: hr/vacation.md]" in prompt
+    assert "the question" not in prompt and "the reference" not in prompt
+
+
+def test_run_judge_rejects_an_unknown_judge_name():
+    with pytest.raises(ValueError, match="Unknown judge: 'politeness'"):
+        run_judge("politeness", MagicMock(), "q", "a", [DOC], "reference")
 
 
 def test_evaluate_target_and_pass_rates_ignore_not_applicable_verdicts():

@@ -348,37 +348,37 @@
     "message": "Laden, bereinigen, aufteilen, einbetten, speichern – und wie pgvector Vektoren ablegt."
   },
   "home.chapter.retrieval.title": {
-    "message": "3. Retrieval-Strategien"
+    "message": "4. Retrieval-Strategien"
   },
   "home.chapter.retrieval.text": {
     "message": "Ähnlichkeitssuche, MMR, Score-Schwelle, Metadaten-Filter und hybride Suche."
   },
   "home.chapter.langchain.title": {
-    "message": "4. LangChain-RAG-Chain"
+    "message": "5. LangChain-RAG-Chain"
   },
   "home.chapter.langchain.text": {
     "message": "Eine feste Pipeline mit LCEL: Retriever, Prompt, LLM."
   },
   "home.chapter.langgraph.title": {
-    "message": "5. LangGraph-RAG-Workflow"
+    "message": "6. LangGraph-RAG-Workflow"
   },
   "home.chapter.langgraph.text": {
     "message": "Dieselbe Pipeline als Graph: State, Nodes und Edges."
   },
   "home.chapter.agentic.title": {
-    "message": "6. Agentic RAG"
+    "message": "7. Agentic RAG"
   },
   "home.chapter.agentic.text": {
     "message": "Ein Graph, der entscheidet, Dokumente bewertet, Suchanfragen umformuliert und es erneut versucht."
   },
   "home.chapter.comparison.title": {
-    "message": "7. Vergleich"
+    "message": "8. Vergleich"
   },
   "home.chapter.comparison.text": {
     "message": "LangChain vs. LangGraph, deterministisches vs. agentisches RAG."
   },
   "home.chapter.pdf.title": {
-    "message": "8. PDF-Chunking nach Schriftgröße"
+    "message": "3. PDF-Chunking nach Schriftgröße"
   },
   "home.chapter.pdf.text": {
     "message": "PDFs mit pdfplumber in Kapitel und Abschnitte aufteilen."
@@ -399,7 +399,7 @@
     "message": "Schnellstart"
   },
   "home.chapter.judge.title": {
-    "message": "10. LLM-as-a-Judge"
+    "message": "12. LLM-as-a-Judge"
   },
   "home.chapter.judge.text": {
     "message": "RAG-Antworten mit LLM-Judges bewerten: Korrektheit, Relevanz, Belegtheit, Relevanz der Suche."
@@ -411,7 +411,7 @@
     "message": "Zufällige Chunks mit LLM-erzeugten Fragen labeln und messen, wie weit oben jede Strategie sie einordnet."
   },
   "home.chapter.mlflow.title": {
-    "message": "12. MLflow"
+    "message": "10. MLflow"
   },
   "home.chapter.mlflow.text": {
     "message": "Jeden LangChain-/LangGraph-Lauf tracen und Auswertungen vergleichen – MLflow-Server in Docker."

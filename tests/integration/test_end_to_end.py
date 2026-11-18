@@ -50,12 +50,16 @@ def test_langchain_and_langgraph_answer_from_the_documents(openai_store):
 def test_judges_agree_with_hand_labelled_calibration_cases(settings):
     if settings.llm_api_key.startswith("your_"):
         pytest.skip("LLM_API_KEY in .env is still the placeholder")
-    from examples.calibrate_judges import run_case
     from rag_lab.evaluation.dataset import CALIBRATION_CASES
+    from rag_lab.evaluation.judges import run_judge
     from rag_lab.models import get_judge_model
 
     llm = get_judge_model(settings)
-    agreements = sum(run_case(llm, case).passed == case.expected for case in CALIBRATION_CASES)
+    agreements = sum(
+        run_judge(case.judge, llm, case.question, case.answer, case.documents, case.reference_answer).passed
+        == case.expected
+        for case in CALIBRATION_CASES
+    )
 
     # The cases are obvious; allow one disagreement because LLM verdicts are not fully deterministic.
     assert agreements >= len(CALIBRATION_CASES) - 1

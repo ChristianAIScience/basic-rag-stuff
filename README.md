@@ -11,9 +11,9 @@ All examples share one PostgreSQL + pgvector database and one configuration.
 | LangChain RAG | a fixed pipeline built with LCEL | `uv run python -m examples.basic_langchain_rag` |
 | LangGraph RAG | the same pipeline as a stateful graph | `uv run python -m examples.basic_langgraph_rag` |
 | Agentic RAG | a graph that decides, grades, rewrites and retries | `uv run python -m examples.agentic_rag` |
-| Evaluation | LLM-as-a-judge: correctness, relevance, groundedness, retrieval relevance | `uv run python -m examples.evaluate_rag` |
-| Retrieval metrics | Hit@k and MRR on chunks labelled with LLM-generated questions | `uv run python -m examples.evaluate_retrieval` |
 | MLflow | traces of every run, evaluation runs to compare (UI on http://localhost:5000) | `docker compose up -d` |
+| Retrieval metrics | Hit@k and MRR on chunks labelled with LLM-generated questions | `uv run python -m examples.evaluate_retrieval` |
+| Evaluation | LLM-as-a-judge: correctness, relevance, groundedness, retrieval relevance | `uv run python -m examples.evaluate_rag` |
 
 The sample documents in `data/` describe the fictional company **Lumora Systems**.
 Because the facts are made up, a correct answer *must* come from retrieval — the LLM can't know them.
@@ -66,16 +66,16 @@ how it connects to the rest, how to run it and what output to expect.
 0. [Quickstart](docs/00_quickstart.md) - from zero to a first answer in ten minutes
 1. [Setup & configuration](docs/01_setup.md)
 2. [Document ingestion & how embeddings are stored](docs/02_ingestion.md)
-3. [Retrieval strategies](docs/03_retrieval.md)
-4. [LangChain RAG chain](docs/04_langchain_rag.md)
-5. [LangGraph RAG workflow](docs/05_langgraph_rag.md)
-6. [Agentic RAG with LangGraph](docs/06_agentic_rag.md)
-7. [Comparison: LangChain vs. LangGraph, deterministic vs. agentic](docs/07_comparison.md)
-8. [PDF chunking by font size](docs/08_pdf_chunking.md)
+3. [PDF chunking by font size](docs/03_pdf_chunking.md)
+4. [Retrieval strategies](docs/04_retrieval.md)
+5. [LangChain RAG chain](docs/05_langchain_rag.md)
+6. [LangGraph RAG workflow](docs/06_langgraph_rag.md)
+7. [Agentic RAG with LangGraph](docs/07_agentic_rag.md)
+8. [Comparison: LangChain vs. LangGraph, deterministic vs. agentic](docs/08_comparison.md)
 9. [Testing](docs/09_testing.md) - what the tests check, reading pytest output, writing tests
-10. [LLM-as-a-judge](docs/10_llm_as_judge.md) - grading RAG answers with LLM judges
+10. [MLflow](docs/10_mlflow.md) - tracing and experiment tracking with an MLflow server in Docker
 11. [Retrieval metrics](docs/11_retrieval_metrics.md) - Hit@k and MRR on LLM-labelled chunks
-12. [MLflow](docs/12_mlflow.md) - tracing and experiment tracking with an MLflow server in Docker
+12. [LLM-as-a-judge](docs/12_llm_as_judge.md) - grading RAG answers with LLM judges
 
 ## Project layout
 

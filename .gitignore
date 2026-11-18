@@ -20,3 +20,6 @@ website/.docusaurus/
 
 # MLflow tracking data (Docker bind mount) - local only
 mlflow-data/
+
+# Session handoff (contains machine details) - local only
+.claude/HANDOFF.md

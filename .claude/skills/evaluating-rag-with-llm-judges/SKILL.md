@@ -6,7 +6,7 @@ description: Grades RAG answers with LLM-as-a-judge evaluators - correctness aga
 # Evaluating RAG with LLM judges
 
 Reference implementation: `rag_lab/evaluation/` - `dataset.py`, `prompts.py`, `judges.py`, `targets.py`, `runner.py`;
-examples `examples/evaluate_rag.py` and `examples/calibrate_judges.py`. Learner-facing explanation: `docs/10_llm_as_judge.md`.
+examples `examples/evaluate_rag.py` and `examples/calibrate_judges.py`. Learner-facing explanation: `docs/12_llm_as_judge.md`.
 Design source: LangSmith tutorial "Evaluate a RAG application" (four binary judges).
 Copyable, self-contained version for other projects: [llm_judges_template.py](llm_judges_template.py) - schemas, prompts, the four judges, pass rates.
 
@@ -26,12 +26,12 @@ Run the unit tests after every edit. Copy this checklist:
 
 ```
 - [ ] 1. Schema (explanation first) + prompt in prompts.py
-- [ ] 2. judge_<name>() in judges.py; add the name to JUDGE_NAMES and to run_all_judges()
-- [ ] 3. One good and one bad CalibrationCase in dataset.py; dispatch in calibrate_judges.run_case()
+- [ ] 2. judge_<name>() in judges.py; add the name to JUDGE_NAMES and a case to run_judge() (evaluate_rag and calibrate_judges both dispatch through it)
+- [ ] 3. One good and one bad CalibrationCase in dataset.py
 - [ ] 4. Unit tests in tests/unit/test_evaluation.py with a MagicMock judge (scripted_judge_llm)
 - [ ] 5. uv run python -m pytest -> fix and repeat until green
 - [ ] 6. With a real key: examples.calibrate_judges -> refine the prompt until every case agrees
-- [ ] 7. Document it in docs/10_llm_as_judge.md and the German copy (maintaining-docs-website)
+- [ ] 7. Document it in docs/12_llm_as_judge.md and the German copy (maintaining-docs-website)
 ```
 
 ## Add evaluation questions

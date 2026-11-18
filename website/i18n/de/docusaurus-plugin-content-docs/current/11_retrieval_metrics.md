@@ -2,7 +2,7 @@
 
 ## Was
 
-Die LLM-Judges (Kapitel 10) bewerten *Antworten*. Hit@k und MRR messen den Schritt davor: Setzt der Retriever
+Die LLM-Judges des nächsten Kapitels bewerten *Antworten*. Hit@k und MRR messen den Schritt davor: Setzt der Retriever
 den richtigen Chunk **nach oben**? Dafür braucht man gelabelte Daten – Fragen, deren richtiger Chunk bekannt ist.
 Das Projekt erzeugt diese Labels automatisch:
 
@@ -61,6 +61,8 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
     return 1.0 / (top_k.index(gold_id) + 1) if gold_id in top_k else 0.0
 ```
 
+`evaluate_retriever()` mittelt genau diese beiden Funktionen über alle Fragen.
+
 | Datei | Aufgabe |
 |---|---|
 | `db/chunks.py` | `fetch_all_chunks()` – alle Chunks mit ihren IDs (eine SQL-Abfrage) |
@@ -71,9 +73,9 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
 
 ## Wie es zusammenhängt
 
-Bewertet werden die fünf Strategien aus Kapitel 3 mit denselben gelabelten Fragen. Der Metadaten-Filter bekommt die
-Kategorie des Gold-Chunks – ein „Orakel", das den bestmöglichen Fall des Filterns zeigt, markiert mit `*`.
-Die Antwort-Judges aus Kapitel 10 und diese Retrieval-Metriken ergänzen sich: Niedriges Hit@k deutet auf den
+Bewertet werden die fünf Strategien aus Kapitel 4 (dieselbe Liste aus `build_strategies()`) mit denselben gelabelten Fragen. Der Metadaten-Filter bekommt die
+Kategorie des Gold-Chunks – ein „Orakel", das den bestmöglichen Fall des Filterns zeigt.
+Die Antwort-Judges aus Kapitel 12 und diese Retrieval-Metriken ergänzen sich: Niedriges Hit@k deutet auf den
 Retriever, gutes Hit@k bei schlechten Antworten auf den Prompt oder das LLM.
 
 ## Ausführen
@@ -100,10 +102,10 @@ strategy                    Hit@1    Hit@3    Hit@5    MRR@5
 similarity                   0.70     0.90     0.95     0.80
 mmr                          0.70     0.85     0.90     0.78
 score_threshold (0.4)        0.65     0.80     0.80     0.72
-metadata_filter*             0.80     0.95     1.00     0.87
+metadata_filter              0.80     0.95     1.00     0.87
 hybrid (RRF)                 0.75     0.90     0.95     0.83
 
-* filter uses the known category of the gold chunk (upper bound for metadata filtering).
+metadata_filter uses the known category of the gold chunk (upper bound for metadata filtering).
 ```
 
 So liest man das: Ist Hit@5 deutlich höher als Hit@1, wird der richtige Chunk gefunden, aber zu weit unten

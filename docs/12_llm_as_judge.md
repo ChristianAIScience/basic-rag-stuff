@@ -1,4 +1,4 @@
-# 10. LLM-as-a-Judge: Evaluating RAG Answers
+# 12. LLM-as-a-Judge: Evaluating RAG Answers
 
 ## What
 
@@ -78,13 +78,13 @@ Such verdicts are not counted in the pass rate.
 |---|---|
 | `evaluation/dataset.py` | 9 questions with human-written reference answers (one deliberately not in the documents), plus calibration cases |
 | `evaluation/prompts.py` | the four judge prompts and output schemas |
-| `evaluation/judges.py` | one function per judge, `run_all_judges()` |
+| `evaluation/judges.py` | one function per judge, `run_judge()` (one judge by name), `run_all_judges()` |
 | `evaluation/targets.py` | adapters: chain, graph and agentic graph → `question -> {"answer", "documents"}` |
 | `evaluation/runner.py` | runs a target over the dataset, `pass_rates()` |
 
 ## How it connects
 
-The judges grade the three implementations from chapters 4-6 on the same questions, so their quality can
+The judges grade the three implementations from chapters 5-7 on the same questions, so their quality can
 be compared directly. For the agentic graph, `documents` are only the chunks it graded relevant - exactly
 what its answer was generated from.
 

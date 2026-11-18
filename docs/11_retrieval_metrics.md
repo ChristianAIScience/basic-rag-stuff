@@ -2,7 +2,7 @@
 
 ## What
 
-The LLM judges (chapter 10) grade *answers*. Hit@k and MRR measure the step before: does the retriever
+The LLM judges of the next chapter grade *answers*. Hit@k and MRR measure the step before: does the retriever
 put the right chunk **near the top**? They need labelled data - questions whose correct chunk is known.
 The project creates those labels automatically:
 
@@ -61,6 +61,8 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
     return 1.0 / (top_k.index(gold_id) + 1) if gold_id in top_k else 0.0
 ```
 
+`evaluate_retriever()` averages exactly these two functions over all questions.
+
 | File | Role |
 |---|---|
 | `db/chunks.py` | `fetch_all_chunks()` - all chunks with their ids (one SQL query) |
@@ -71,9 +73,9 @@ def reciprocal_rank(ranked_ids: list[str], gold_id: str, k: int) -> float:
 
 ## How it connects
 
-It evaluates the five strategies from chapter 3 on the same labelled questions. The metadata filter is
-given the category of the gold chunk - an "oracle" that shows the best case of filtering, marked with `*`.
-The answer-level judges of chapter 10 and these retrieval metrics complement each other:
+It evaluates the five strategies from chapter 4 (the same `build_strategies()` list) on the same labelled questions. The metadata filter is
+given the category of the gold chunk - an "oracle" that shows the best case of filtering.
+The answer-level judges of chapter 12 and these retrieval metrics complement each other:
 low Hit@k points to the retriever, good Hit@k with bad answers points to the prompt or the LLM.
 
 ## Run
@@ -99,10 +101,10 @@ strategy                    Hit@1    Hit@3    Hit@5    MRR@5
 similarity                   0.70     0.90     0.95     0.80
 mmr                          0.70     0.85     0.90     0.78
 score_threshold (0.4)        0.65     0.80     0.80     0.72
-metadata_filter*             0.80     0.95     1.00     0.87
+metadata_filter              0.80     0.95     1.00     0.87
 hybrid (RRF)                 0.75     0.90     0.95     0.83
 
-* filter uses the known category of the gold chunk (upper bound for metadata filtering).
+metadata_filter uses the known category of the gold chunk (upper bound for metadata filtering).
 ```
 
 How to read it: if Hit@5 is much higher than Hit@1, the right chunk is found but ranked too low -

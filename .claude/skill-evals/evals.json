@@ -130,8 +130,9 @@
     ],
     "expected_behavior": [
       "Creates a new module with SCORE_LABEL and one function",
+      "Registers it once in build_strategies(), so compare_retrievers and evaluate_retrieval both run it",
       "Labels the reranker score separately from distances",
-      "Adds unit and integration tests and updates docs/03_retrieval.md plus the German copy"
+      "Adds unit and integration tests and updates docs/04_retrieval.md plus the German copy"
     ]
   },
   {
@@ -296,9 +297,9 @@
     "skills": [
       "maintaining-docs-website"
     ],
-    "query": "I fixed a typo in docs/03_retrieval.md.",
+    "query": "I fixed a typo in docs/04_retrieval.md.",
     "files": [
-      "docs/03_retrieval.md"
+      "docs/04_retrieval.md"
     ],
     "expected_behavior": [
       "Checks whether the German copy needs the same fix",
@@ -343,7 +344,7 @@
     "expected_behavior": [
       "Schema with explanation as first field and a bool verdict",
       "Adds one good and one bad CalibrationCase and unit tests with a fake judge",
-      "Updates JUDGE_NAMES, run_all_judges and the docs chapter in both languages"
+      "Updates JUDGE_NAMES, run_judge() and the docs chapter in both languages"
     ]
   },
   {

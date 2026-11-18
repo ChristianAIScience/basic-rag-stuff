@@ -7,7 +7,7 @@ Die Pipeline in `rag_lab/ingestion/` macht aus Dateien durchsuchbare Zeilen in P
 ```
 data/*.md, *.txt, *.pdf
    │ loader.py     -> Document(page_content, metadata={source, category})
-   │                  (PDFs: one Document per chapter/section, see 08_pdf_chunking.md)
+   │                  (PDFs: one Document per chapter/section, see 03_pdf_chunking.md)
    │ cleaner.py    -> normalized whitespace, empty docs removed
    │ splitter.py   -> chunks of ≤ CHUNK_SIZE characters, CHUNK_OVERLAP shared
    │ pipeline.py   -> deterministic id per chunk

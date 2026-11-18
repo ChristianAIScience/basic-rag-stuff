@@ -1,4 +1,4 @@
-# 7. Vergleich
+# 8. Vergleich
 
 ## LangChain-Chain vs. LangGraph-Workflow
 
@@ -38,4 +38,4 @@ Faustregel: deterministisch anfangen. Agentische Schritte erst hinzufügen, wenn
 | Metadaten-Filter | genaue Eingrenzung | braucht bekannte Metadaten zum Zeitpunkt der Anfrage |
 | Hybrid (RRF) | exakte Begriffe (Codes, Namen) + Bedeutung | Stichwortsuche braucht alle Wörter (`plainto_tsquery`) |
 
-Details in [03_retrieval.md](03_retrieval.md); `examples.compare_retrievers` zeigt die Strategien nebeneinander.
+Details in [04_retrieval.md](04_retrieval.md); `examples.compare_retrievers` zeigt die Strategien nebeneinander.

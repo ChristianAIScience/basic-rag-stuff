@@ -1,4 +1,4 @@
-# 7. Comparison
+# 8. Comparison
 
 ## LangChain chain vs. LangGraph workflow
 
@@ -38,4 +38,4 @@ Rule of thumb: start deterministic. Add agentic steps when you observe concrete 
 | Metadata filter | precise scoping | needs known metadata at query time |
 | Hybrid (RRF) | exact terms (codes, names) + meaning | keyword side needs all words to match (`plainto_tsquery`) |
 
-See [03_retrieval.md](03_retrieval.md) for details and `examples.compare_retrievers` to see them side by side.
+See [04_retrieval.md](04_retrieval.md) for details and `examples.compare_retrievers` to see them side by side.
